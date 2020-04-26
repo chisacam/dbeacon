@@ -1,247 +1,219 @@
-import React, {Component} from 'react';
-
+import React, { Component } from "react"; //임시 로그인 창
 import {
-Alert,
-DeviceEventEmitter
-} from 'react-native';
-
-import {
-  SafeAreaView,
-  StyleSheet,
-  ScrollView,
   View,
   Text,
-  StatusBar,
-  Image,
+  TouchableOpacity,
+  TextInput,
+  StyleSheet,
+  BackHandler,
   Button,
-  TouchableOpacity
-} from 'react-native';
+  Image
+} from "react-native";
+import AsyncStorage from '@react-native-community/async-storage';
+import {StackViewStyleInterpolator} from 'react-navigation-stack';
 
-import Beacons from 'react-native-beacons-manager';
+import {
+  Scene,
+  Router,
+  Actions,
+  ActionConst,
+  Overlay,
+  Tabs,
+  Modal,
+  Drawer,
+  Stack,
+  Lightbox,
+} from 'react-native-router-flux';
 
-import {PermissionsAndroid} from 'react-native';
+import Main from './Main';
+import Join from './Join';
+const DBEACON_TOKEN = 'dblab_dbeacon';
 
-async function requestPermission() {
-  try {
-    const granted = await PermissionsAndroid.request(
-      PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
-    );
-  } catch (err) {
-    console.warn(err);
+class Inputs extends Component {
+  state = {
+    email: "",
+    password: ""
+  };
+ 
+  handleEmail = text => {
+    this.setState({ email: text });
+  };
+ 
+  handlePassword = text => {
+    this.setState({ password: text });
+  };
+
+  async _onValueChange(selectedValue) {
+    try {
+      const Value = JSON.stringify(selectedValue);
+      await AsyncStorage.setItem(DBEACON_TOKEN, Value);
+    } catch (error) {
+      console.log('AsyncStorage error: ' + error.message);
+    }
   }
-}
 
-requestPermission();
+  login = (email, pass) => {
+    fetch("https://api.chiyak.duckdns.org/users/login", {
+      method: "POST", 
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        userid: email,
+        userpw: pass, 
+      })
+    })
+    .then((response) => response.json())
+    .then((responseData) => {
+      console.log(responseData);
+      this._onValueChange(responseData);
+      Actions.main();
+    })
+    .done();
+  };
 
-Beacons.detectIBeacons();
-
-Beacons.startRangingBeaconsInRegion('Region1');
-
-class NavBar extends Component {        //상단바 컴포넌트
-  render() {
-    return(
-      <View style={styles.navBar}>
-       <Text style={styles.navBarText}>
-          MainPage: User
-        </Text>
-      </View>
-    )
-
-  }
-}
-
-class CButton extends Component {   //버튼크기
   render() {
     return (
-      <View style={{flex: 1, height: 205, borderWidth: 0.5, justifyContent: 'center', alignItems: 'center'}}>
-        <View style={{width: 50, height: 50}} />
-        <Text>{this.props.name}</Text>
-      </View>
-    )
-  }
-}
-
-class User extends Component {            //유저 컴포넌트
-  render() {
-    
-    return(
-      <View style={styles.user}>
-       <View style={{height: 100, flexDirection: 'row', alignItems: 'center'}}>
-          <View style={{width: 110}}>
-            <View style={{marginLeft: 5,width: 100, height: 90, backgroundColor: 'gray'}} ></View>
-          </View>
-          <View style={{flex: 1}}>
-            <Text>이름</Text>
-            <Text>직책</Text>
-            <Text>직장명</Text>
-          </View>
-        </View>
-        <View style={{height: 50, flexDirection: 'row', alignItems: 'center'}}>
-          <View style={{flex: 1, height: 50, flexDirection: 'row', borderWidth: 1, alignItems: 'center', justifyContent: 'center'}}>
-            <Text>오늘일자</Text>
-          </View>
-          <View style={{flex: 1, height: 50, flexDirection: 'row', borderWidth: 1, alignItems: 'center', justifyContent: 'center'}}>
-            <Text>최근이력</Text>
-          </View>
-          <View style={{flex: 1, height: 50, flexDirection: 'row', borderWidth: 1, alignItems: 'center', justifyContent: 'center'}}>
-            <Text>로그아웃</Text>
-          </View>
-        </View>
-      </View>
-    )
-  }
-}
-
-class ButtonGroup extends Component {             // 버튼 컴포넌트
-  constructor(){
- 
-    super();
- 
-    this.state={
- 
-      // Default Value for ButtonStateHolder State. Now the button is Enabled.
-      ButtonStateHolder : false,
- 
-      // Default Text for Button Title.
-      ButtonTitle : '버튼 활성화'
- 
-    }
-    this.listener = DeviceEventEmitter.addListener('beaconsDidRange', (data) => {
-      if (data.beacons.length) {
-        this.setState({
       
-          // On State True it will Disable the button.
-          ButtonStateHolder : false ,
-    
-          ButtonTitle : '버튼 활성화'
+      <View style={styles.container3}>
         
-        })
-      }
-      else {
-        this.setState({
-        
-          // On State True it will Disable the button.
-          ButtonStateHolder : true ,
-   
-          ButtonTitle : '버튼 비활성화'
-        
-        })
-      }
-    });
+        <TextInput
+          style={styles.input}
+          underlineColorAndroid="transparent"
+          placeholder=" Email"
+          placeholderTextColor="#9a73ef"
+          autoCapitalize="none"
+          onChangeText={this.handleEmail}
+        />
+        <TextInput
+          style={styles.input}
+          underlineColorAndroid="transparent"
+          placeholder=" Password"
+          placeholderTextColor="#9a73ef"
+          autoCapitalize="none"
+          onChangeText={this.handlePassword}
+        />
+        <TouchableOpacity
+          style={styles.submitButton}
+          onPress={() => this.login(this.state.email, this.state.password)}
+        >
+          <Text style={styles.submitButtonText}>Submit</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.submitButton}
+          onPress={() => Actions.join()}
+        >
+          <Text style={styles.submitButtonText}>Join</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
+}
+
+const stateHandler = (prevState, newState, action) => {
+    console.log('onStateChange: ACTION:', action);
+  };
+  
+  // on Android, the URI prefix typically contains a host in addition to scheme
+  const prefix = Platform.OS === 'android' ? 'mychat://mychat/' : 'mychat://';
+  
+  const transitionConfig = () => ({
+    screenInterpolator: StackViewStyleInterpolator.forFadeFromBottomAndroid,
+  });
+
+class loginpage extends Component {                   //로그인페이지
+  state = {
+    isLogin:false
   }
   
-  SampleButtonFunction=()=>
-   {
-      Alert.alert('요청을 받았습니다.');
-   }
-
-  render() {
-    return(
-      <View>
-       <View style={styles.buttonGroup}>
-
-        <View style={{flex: 1, flexDirection: 'row'}}>
-
-         <TouchableOpacity style={{flex: 1, height: 205, borderWidth: 0.5, justifyContent: 'center', alignItems: 'center'}}
-           activeOpacity = { .5 } 
-           disabled={this.state.ButtonStateHolder}
-           onPress={this.SampleButtonFunction} >
-          <Text> "출근" </Text>
-         </TouchableOpacity>
-
-         <TouchableOpacity style={{flex: 1, height: 205, borderWidth: 0.5, justifyContent: 'center', alignItems: 'center'}}
-           activeOpacity = { .5 } 
-           disabled={this.state.ButtonStateHolder}
-           onPress={this.SampleButtonFunction} >
-          <Text> "퇴근" </Text>
-         </TouchableOpacity>
-
-      </View>
-
-      <View style={{flex: 1, flexDirection: 'row'}}>
-        <TouchableOpacity style={{flex: 1, height: 205, borderWidth: 0.5, justifyContent: 'center', alignItems: 'center'}}
-          activeOpacity = { .5 } 
-          disabled={this.state.ButtonStateHolder}
-          onPress={this.SampleButtonFunction} >
-         <Text> "외출" </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={{flex: 1, height: 205, borderWidth: 0.5, justifyContent: 'center', alignItems: 'center'}}
-          activeOpacity = { .5 } 
-          disabled={this.state.ButtonStateHolder}
-          onPress={this.SampleButtonFunction} >
-          <Text> "복귀" </Text>
-        </TouchableOpacity>
-
-      </View>
-     </View>
-    </View>
-    )
+  async isLoggedin() {
+    const val = await AsyncStorage.getItem(DBEACON_TOKEN);
+    if(val !== null){
+      this.setState({isLogin:true});
+    }else{
+      this.setState({isLogin:false});
+    }
   }
-}
-class Taps extends Component {                //탭 컴포넌트
-  render() {
-    return(
-      <View style={styles.taps}>
-         <CButton name= "종료" />
-      </View>
-    )
+  
+  componentDidMount() {
+    this.isLoggedin();
+    this.homeBackPressHandler = BackHandler.addEventListener('homeBackPress', () => {
+      BackHandler.exitApp();
+    })
   }
-}
-
-
-class Mainpage extends Component {                   //메인페이지
   componentWillUnmount() {
-    DeviceEventEmitter.removeAllListeners();
-  }
+    this.homeBackPressHandler.remove();
+  }           
   render() {
+    
     return (
-      <View style={styles.container,styles.and}>
-        <NavBar />
-        <User />
-        <ButtonGroup/>
-        <Taps />
-      </View>
+        <Router
+            onStateChange={stateHandler}
+            sceneStyle={styles.scene}
+            uriPrefix={prefix}>
+            <Overlay key="overlay">
+                <Modal key="modal" hideNavBar transitionConfig={transitionConfig}>
+                    <Stack key="root" titleStyle={{alignSelf: 'center'}} hideNavBar>
+                        <Scene
+                            key="login"
+                            component={Inputs}
+                            title="login"
+                            initial={!this.state.isLogin}
+                        />            
+                        <Scene
+                            key="main"
+                            component={Main}
+                            title="main"
+                            initial={this.state.isLogin}
+                        />
+                        <Scene
+                            key="join"
+                            component={Join}
+                            title="join"
+                        />
+                    </Stack>
+                </Modal>
+            </Overlay>
+        </Router>
     );
   }
 }
-
-
+export default loginpage;
+ 
 const styles = StyleSheet.create({
-  container: {
+  container2: {
     flex: 1,
     flexDirection: 'column',
   },
-
-  navBar: {
-    height: 60,
-    backgroundColor: '#00498c',
-    justifyContent: 'center',
-    alignItems: 'center',
+  container3: {
+        flex: 1,
+    paddingTop: 20,
+    paddingLeft:40,
+    justifyContent:"center",
+    width:"90%"
   },
-
-  navBarText: {
-    fontSize: 20,
-    color: 'white',
+  container1: {
+      flex: 1,
+      alignItems:"center",
+      justifyContent:"flex-end"
   },
-  user: {
-    height: 150,
-    backgroundColor: '#84B1ED',
+  input: {
+    margin: 15,
+    height: 40,
+    borderColor: "#7a42f4",
+    borderWidth: 1
   },
-  buttonGroup: {
-    height: 410,
-    backgroundColor: 'white',
+  submitButton: {
+    backgroundColor: "#7a42f4",
+    padding: 10,
+    margin: 15,
+    height: 40
   },
-  taps: {
-    height: 80,
-    backgroundColor: '#83a4d4'
+  submitButtonText: {
+    color: "white"
   },
   and: {
     flex: 1
-	},
+	}
 });
-
-
-
-export default Mainpage;
-
