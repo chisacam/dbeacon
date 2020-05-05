@@ -997,6 +997,13 @@
     wcwidth "^1.0.1"
     ws "^1.1.0"
 
+"@react-native-community/datetimepicker@^2.3.2":
+  version "2.3.2"
+  resolved "https://registry.yarnpkg.com/@react-native-community/datetimepicker/-/datetimepicker-2.3.2.tgz#c4dfc503ed260c7c93ce838f60e707dbba179452"
+  integrity sha512-BbDmWVIaSYoYK2x5tRRuy/UWUVS6WtZ+3D210zYZgyD47yEVcTbaLFL9zFw7VxNMb8c/6BFcEpC6k18WTYplwA==
+  dependencies:
+    invariant "^2.2.4"
+
 "@react-native-community/eslint-config@^0.0.6":
   version "0.0.6"
   resolved "https://registry.yarnpkg.com/@react-native-community/eslint-config/-/eslint-config-0.0.6.tgz#9f1dffde994a14db7504a969f21cdf49f470eb34"
@@ -1019,6 +1026,11 @@
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@react-native-community/eslint-plugin/-/eslint-plugin-1.0.0.tgz#ae9a430f2c5795debca491f15a989fce86ea75a0"
   integrity sha512-GLhSN8dRt4lpixPQh+8prSCy6PYk/MT/mvji/ojAd5yshowDo6HFsimCSTD/uWAdjpUq91XK9tVdTNWfGRlKQA==
+
+"@react-native-community/picker@^1.3.0":
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/@react-native-community/picker/-/picker-1.3.0.tgz#74be7dd93c54426677ddd68080ca253906a57e07"
+  integrity sha512-ak4CU6IkpNmXeAt+A4stCr/GLAli/o+5NOREH2YxybBUY0Z8pyf+WPzDL5QQdl1DsyO8wsC5J1pnbrm9NAVKmQ==
 
 "@react-navigation/core@^3.5.1":
   version "3.5.1"
@@ -4607,6 +4619,11 @@ mkdirp@^0.5.1:
   dependencies:
     minimist "0.0.8"
 
+moment@^2.22.0, moment@^2.25.1:
+  version "2.25.3"
+  resolved "https://registry.yarnpkg.com/moment/-/moment-2.25.3.tgz#252ff41319cf41e47761a1a88cab30edfe9808c0"
+  integrity sha512-PuYv0PHxZvzc15Sp8ybUCoQ+xpyPWvjOuK72a5ovzp2LI32rJXOiIfyoFoYvG3s6EwwrdkMyWuRiEHSZRLJNdg==
+
 ms@2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/ms/-/ms-2.0.0.tgz#5608aeadfc00be6c2901df5f9861788de0d597c8"
@@ -5281,6 +5298,16 @@ react-devtools-core@^4.0.6:
     shell-quote "^1.6.1"
     ws "^7"
 
+react-dom@^16.13.1:
+  version "16.13.1"
+  resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-16.13.1.tgz#c1bd37331a0486c078ee54c4740720993b2e0e7f"
+  integrity sha512-81PIMmVLnCNLO/fFOQxdQkvEq/+Hfpv24XNJfpyZhTRfO0QcmQIF/PgCa1zCOj2w1hrn12MFLyaJ/G0+Mxtfag==
+  dependencies:
+    loose-envify "^1.1.0"
+    object-assign "^4.1.1"
+    prop-types "^15.6.2"
+    scheduler "^0.19.1"
+
 react-is@^16.12.0:
   version "16.13.1"
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.13.1.tgz#789729a4dc36de2999dc156dd6c1d9c18cea56a4"
@@ -5306,6 +5333,13 @@ react-native-button@^2.4.0:
   integrity sha512-4siaJlpOLeL9fAhX8VU3cnUfcGLe3E2zABDWSKxkF+NiYOd+AnKeYY29WXlV8hXhCFo+Ry7E+alrJ6zjZLTSfg==
   dependencies:
     prop-types "^15.5.10"
+
+react-native-datepicker@^1.7.2:
+  version "1.7.2"
+  resolved "https://registry.yarnpkg.com/react-native-datepicker/-/react-native-datepicker-1.7.2.tgz#58d0822591a0ac9b32aba082650222a0ee29669d"
+  integrity sha1-WNCCJZGgrJsyq6CCZQIioO4pZp0=
+  dependencies:
+    moment "^2.22.0"
 
 react-native-gesture-handler@^1.4.1:
   version "1.5.3"
@@ -5343,6 +5377,11 @@ react-native-router-flux@4.2.0:
     react-navigation-stack "^1.7.3"
     react-navigation-tabs "^2.5.2"
     remove "^0.1.5"
+
+react-native-safe-area-context@^0.7.3:
+  version "0.7.3"
+  resolved "https://registry.yarnpkg.com/react-native-safe-area-context/-/react-native-safe-area-context-0.7.3.tgz#ad6bd4abbabe195332c53810e4ce5851eb21aa2a"
+  integrity sha512-9Uqu1vlXPi+2cKW/CW6OnHxA76mWC4kF3wvlqzq4DY8hn37AeiXtLFs2WkxH4yXQRrnJdP6ivc65Lz+MqwRZAA==
 
 react-native-safe-area-view@^0.14.1, react-native-safe-area-view@^0.14.6:
   version "0.14.8"
@@ -5824,6 +5863,14 @@ scheduler@^0.15.0:
   version "0.15.0"
   resolved "https://registry.yarnpkg.com/scheduler/-/scheduler-0.15.0.tgz#6bfcf80ff850b280fed4aeecc6513bc0b4f17f8e"
   integrity sha512-xAefmSfN6jqAa7Kuq7LIJY0bwAPG3xlCj0HMEBQk1lxYiDKZscY2xJ5U/61ZTrYbmNQbXa+gc7czPkVo11tnCg==
+  dependencies:
+    loose-envify "^1.1.0"
+    object-assign "^4.1.1"
+
+scheduler@^0.19.1:
+  version "0.19.1"
+  resolved "https://registry.yarnpkg.com/scheduler/-/scheduler-0.19.1.tgz#4f3e2ed2c1a7d65681f4c854fa8c5a1ccb40f196"
+  integrity sha512-n/zwRWRYSUj0/3g/otKDRPMh6qv2SYMWNq85IEa8iZyAv8od9zDYpGSnpBEjNgcMNq6Scbu5KfIPxNF72R/2EA==
   dependencies:
     loose-envify "^1.1.0"
     object-assign "^4.1.1"
