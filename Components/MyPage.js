@@ -47,24 +47,19 @@ export default class MyPage extends React.Component {
 
   // 기간 지정, 지정 후 제출 했을 때만 넘어감
   _setTerm = (selected) => {
-    const year = new Date().getFullYear();
-    const month = new Date().getMonth();
-    const day = new Date().getDate();
-    let today = year + "-" + month + "-" + day;
-
     if (selected === "today") {
       // 00:00:00 ~ 23:59:59
       this.setState({
-        startTime: today,
-        endTime: today,
-        show: true,
+        startTime: this.props.startTime || new Date().getFullYear() + "-" + (((new Date().getMonth() + 1) <= 10) ? "0" + (new Date().getMonth() + 1) : (new Date().getMonth() + 1)) + "-" + ((new Date().getDate() <= 10) ? "0" + new Date().getDate() : new Date().getDate()),
+        endTime: this.props.endTime || new Date().getFullYear() + "-" + (((new Date().getMonth() + 1) <= 10) ? "0" + (new Date().getMonth() + 1) : (new Date().getMonth() + 1)) + "-" + (((new Date().getDate() + 1) <= 10) ? "0" + (new Date().getDate() + 1) : (new Date().getDate() + 1)),
+//         show: true,
       });
     } else if (selected === "total") {
       // 20-01-01 ~ today
       this.setState({
         startTime: "2020-01-01",
-        endTime: today,
-        show: true,
+        endTime: this.props.endTime || new Date().getFullYear() + "-" + (((new Date().getMonth() + 1) <= 10) ? "0" + (new Date().getMonth() + 1) : (new Date().getMonth() + 1)) + "-" + (((new Date().getDate() + 1) <= 10) ? "0" + (new Date().getDate() + 1) : (new Date().getDate() + 1)),
+//         show: true,
       });
     }
   };
