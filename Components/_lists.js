@@ -34,7 +34,7 @@ export default class ScrollList extends Component {
         .then((json) => {
           console.log(json)
           this.setState({
-            data: json,
+            data: json.reverse(),
           });
         })
         .then(() => {
@@ -48,6 +48,12 @@ export default class ScrollList extends Component {
 
   componentDidMount() {
     this._getData();
+  }
+  
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    if (this.props.startTime !== prevProps.startTime || this.props.endTime !== prevProps.endTime) {
+      this._getData();
+    }
   }
 
   _loadMore = () => {
