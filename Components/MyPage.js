@@ -4,6 +4,7 @@ import { Picker } from "@react-native-community/picker";
 import DatePicker from "./_datePicker";
 import ScrollList from "./_lists";
 import { Actions } from "react-native-router-flux";
+
 function getFormatDate(date){
   var year = date.getFullYear();              //yyyy
   var month = (1 + date.getMonth());          //M
@@ -12,6 +13,7 @@ function getFormatDate(date){
   day = day >= 10 ? day : '0' + day;          //day 두자리로 저장
   return  year + '-' + month + '-' + day;
 }
+
 export default class MyPage extends React.Component {
     state = {
       selected: "today",
@@ -32,6 +34,16 @@ export default class MyPage extends React.Component {
       endTime: value,
     });
   };
+
+  shouldComponentUpdate() {
+    return true;
+  }
+
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    if (prevState.startTime !== this.state.startTime || prevState.endTime !== this.state.endTime) {
+      this._setTerm(this.state.selected);
+    }
+  }
 
   // 기간 지정, 지정 후 제출 했을 때만 넘어감
   _setTerm = (selected) => {
@@ -70,7 +82,25 @@ export default class MyPage extends React.Component {
             selectedValue={this.state.selected}
             style={{ height: 50, width: 150 }}
             onValueChange={(itemValue) =>
-              this.setState({ selected: itemValue })
+              {
+                if (itemValue === "today") {
+                 this.setState({ 
+                  selected: itemValue,
+                  startTime: this.props.startTime || new Date().getFullYear() + "-" + (((new Date().getMonth() + 1) <= 10) ? "0" + (new Date().getMonth() + 1) : (new Date().getMonth() + 1)) + "-" + ((new Date().getDate() <= 10) ? "0" + new Date().getDate() : new Date().getDate()),
+                  endTime: this.props.endTime || new Date().getFullYear() + "-" + (((new Date().getMonth() + 1) <= 10) ? "0" + (new Date().getMonth() + 1) : (new Date().getMonth() + 1)) + "-" + (((new Date().getDate() + 1) <= 10) ? "0" + (new Date().getDate() + 1) : (new Date().getDate() + 1))
+                 })
+                } else if ( itemValue === "total" ) {
+                  this.setState({
+                    selected: itemValue,
+                    startTime: "2020-01-01",
+                    endTime: this.props.endTime || new Date().getFullYear() + "-" + (((new Date().getMonth() + 1) <= 10) ? "0" + (new Date().getMonth() + 1) : (new Date().getMonth() + 1)) + "-" + (((new Date().getDate() + 1) <= 10) ? "0" + (new Date().getDate() + 1) : (new Date().getDate() + 1))
+                  })
+                } else {
+                  this.setState({
+                    selected: itemValue
+                  })
+                }
+              }
             }
           >
             <Picker.Item label="오늘" value="today" />
@@ -88,35 +118,6 @@ export default class MyPage extends React.Component {
             <View style={styles.divideBox}>
               {/* 날짜 끝 */}
               <DatePicker updateState={this._updateEndTime} />
-            </View>
-            <View style={styles.divideBox}>
-              {/* 제출 버튼 */}
-              <TouchableOpacity
-                style={{
-                  flex: 1,
-                  width: 100,
-                  height: 50,
-                  alignItems: "center",
-                  justifyContent: "center",
-                  borderRadius: 3,
-                  borderColor: "#007bff",
-                  margin: 5,
-                }}
-                onPress={() => {
-                  Actions.refresh({startTime:this.state.startTime, endTime:this.state.endTime})
-                  console.warn(this.state.startTime, this.state.endTime) // 잘 넘어감
-                }}
-              >
-                <Text
-                  style={{
-                    fontSize: 20,
-                    color: "#007bff",
-                    marginBottom: 25,
-                  }}
-                >
-                  제출
-                </Text>
-              </TouchableOpacity>
             </View>
           </View>
         ) : null}
