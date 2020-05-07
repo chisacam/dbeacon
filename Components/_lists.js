@@ -35,6 +35,7 @@ export default class ScrollList extends Component {
           console.log(json)
           this.setState({
             data: json.reverse(),
+            order: 10
           });
         })
         .then(() => {
