@@ -47,11 +47,6 @@ export default class MyPage extends React.Component {
 
   // 기간 지정, 지정 후 제출 했을 때만 넘어감
   _setTerm = (selected) => {
-    const year = new Date().getFullYear();
-    const month = new Date().getMonth();
-    const day = new Date().getDate();
-    let today = year + "-" + month + "-" + day;
-
     if (selected === "today") {
       // 00:00:00 ~ 23:59:59
       this.setState({
