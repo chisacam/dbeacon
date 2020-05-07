@@ -123,7 +123,7 @@ export default class Register extends Component {
         <TouchableHighlight
           style={[styles.buttonContainer, styles.loginButton]}
           // 회원가입 버튼 이벤트
-          onPress = {() => this.join(this.state.name,this.state.email, this.state.password,this.state.PasswordCheck, this.state.depart)}
+          onPress = {() => this.join(this.state.name,this.state.email, this.state.password, this.state.passwordCheck, this.state.depart)}
         >
           <Text style={styles.loginText}>회원가입</Text>
         </TouchableHighlight>
