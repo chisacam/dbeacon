@@ -4,6 +4,7 @@ import { Picker } from "@react-native-community/picker";
 import DatePicker from "./_datePicker";
 import ScrollList from "./_lists";
 import { Actions } from "react-native-router-flux";
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 export default class MyPage extends React.Component {
     state = {
@@ -55,7 +56,7 @@ export default class MyPage extends React.Component {
 
   render() {
     return (
-      <View style={styles.container}>
+      <SafeAreaProvider>
         <View style={styles.navBar}>
           {/* 상단 바 */}
           <Text style={styles.navText}>근태 기록</Text>
@@ -112,7 +113,7 @@ export default class MyPage extends React.Component {
            endTime={this.state.endTime}
          /> : null}
         </View>
-      </View>
+      </SafeAreaProvider>
     );
   }
 }
@@ -120,7 +121,7 @@ export default class MyPage extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
+    // paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
   },
   navBar: {
     flex: 0.7,

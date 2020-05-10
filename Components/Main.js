@@ -17,6 +17,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import {PermissionsAndroid} from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import moment from 'moment'
+import { useSafeArea } from 'react-native-safe-area-context'
 const DBEACON_TOKEN = 'dblab_dbeacon';
 
 async function requestPermission() {
@@ -40,7 +41,7 @@ class NavBar extends Component {
   render() {
     return (
       <View style={styles.navBar}>
-        <Text style={styles.navBarText}>MainPage</Text>
+        <Text style={styles.navBarText}>DBeacon</Text>
       </View>
     );
   }
@@ -146,7 +147,7 @@ class User extends Component {
           </View>
         </View>
         <View
-          style={{ flex: 1, flexDirection: "row", alignItems: "center" }}
+          style={{ flex: 1, flexDirection: "row", alignItems: "center", borderBottomColor: 'grey', borderBottomWidth: 0.5 }}
         >
           <TouchableOpacity
             style={{
@@ -160,7 +161,7 @@ class User extends Component {
               Actions.MyPage()
             }
           >
-            <Text style={{fontSize: 18}}>전체이력</Text>
+            <Text style={{fontSize: 18, fontWeight: 'bold'}}>근태이력</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={{
@@ -172,7 +173,7 @@ class User extends Component {
             }}
             onPress={() => null}
           >
-            <Text style={{fontSize: 18}}>최근이력</Text>
+            <Text style={{fontSize: 18, fontWeight: 'bold'}}>정보수정</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={{
@@ -185,7 +186,7 @@ class User extends Component {
             }}
             onPress={() => this._userLogout()}
           >
-            <Text style={{fontSize: 18}}>로그아웃</Text>
+            <Text style={{fontSize: 18, fontWeight: 'bold'}}>로그아웃</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -276,24 +277,28 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: "column",
-    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
   },
 
   navBar: {
-    width:"100%",
-    height:"5%",
+    width: "100%",
+    height: "10%",
+    flex: 6,
     backgroundColor: "#007bff",
     justifyContent: "center",
-    alignItems: "center",
   },
 
   navBarText: {
-    fontSize: 20,
+    marginTop: 15,
+    marginLeft: 15,
+    fontSize: 25,
+    fontWeight: "bold",
+    alignContent: "center",
+    alignItems: "center",
     color: "white",
   },
   user: {
     width:"100%",
-    height:"30%",
+    height:"20%",
     backgroundColor: "white",
   },
   buttonGroup: {
