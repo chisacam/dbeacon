@@ -1,5 +1,5 @@
 {
-  "name": "Example",
+  "name": "example",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -19,6 +19,7 @@
     "react-native": "0.62.2",
     "react-native-beacons-manager": "git://github.com/MacKentoch/react-native-beacons-manager.git#53c1bda",
     "react-native-button": "^2.4.0",
+    "react-native-datepicker": "1.7.2",
     "react-native-gesture-handler": "^1.4.1",
     "react-native-message-bar": "^2.0.10",
     "react-native-reanimated": "^1.2.0",
