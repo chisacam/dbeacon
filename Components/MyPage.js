@@ -43,13 +43,11 @@ export default class MyPage extends React.Component {
       this.setState({
         startTime: this.props.startTime || new Date().getFullYear() + "-" + (((new Date().getMonth() + 1) <= 10) ? "0" + (new Date().getMonth() + 1) : (new Date().getMonth() + 1)) + "-" + ((new Date().getDate() <= 10) ? "0" + new Date().getDate() : new Date().getDate()),
         endTime: this.props.endTime || new Date().getFullYear() + "-" + (((new Date().getMonth() + 1) <= 10) ? "0" + (new Date().getMonth() + 1) : (new Date().getMonth() + 1)) + "-" + (((new Date().getDate() + 1) <= 10) ? "0" + (new Date().getDate() + 1) : (new Date().getDate() + 1)),
-        // show: true,
       });
     } else if (selected === "total") {
       this.setState({
         startTime: "2020-01-01",
         endTime: this.props.endTime || new Date().getFullYear() + "-" + (((new Date().getMonth() + 1) <= 10) ? "0" + (new Date().getMonth() + 1) : (new Date().getMonth() + 1)) + "-" + (((new Date().getDate() + 1) <= 10) ? "0" + (new Date().getDate() + 1) : (new Date().getDate() + 1)),
-        // show: true,
       });
     }
   };
