@@ -6,11 +6,12 @@ import {
   TextInput,
   TouchableHighlight,
   Image,
-  Alert,
   Platform,
   StatusBar
 } from "react-native";
 import { Actions } from "react-native-router-flux";
+import * as AppFunction from "../App"
+
 export default class Register extends Component {
   constructor(props) {
     super(props);
@@ -22,34 +23,56 @@ export default class Register extends Component {
       passwordCheck: "",
       depart: "",
     }
-  }
+  } 
+
   join = (name, email, pass, passre, depart) => {
-    fetch("https://api.chiyak.duckdns.org/users/signup", {
-      method: "POST", 
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        name: name,
-        userid: email,
-        userpw: pass, 
-        userpwre: passre,
-        depart:depart
+    if(name === "") {
+      AppFunction.alert("Error", "이름을 입력하세요");
+    }
+    else if (email === "") {
+      AppFunction.alert("Error", "이메일을 입력하세요");
+    }
+    else if (pass === "") {
+      AppFunction.alert("Error", "비밀번호를 입력하세요");
+    }
+    else if (passre === "") {
+      AppFunction.alert("Error", "비밀번호를 다시 입력하세요");
+    }
+    else if (depart === "") {
+      AppFunction.alert("Error", "부서를 입력하세요");
+    }
+    else if (pass !== passre) {
+      AppFunction.alert("Error", "비밀번호가 일치하지 않습니다");
+    }
+    else {
+      fetch("https://api.chiyak.duckdns.org/users/signup", {
+        method: "POST", 
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          name: name,
+          userid: email,
+          userpw: pass, 
+          userpwre: passre,
+          depart:depart
+        })
       })
-    })
-    .then((response) => response.json())
-    .then((responseData) => {
-      console.log(responseData);
-      if(responseData['code'] != "error") {
-          alert('회원가입 완료! 가입한 정보로 로그인해주세요.');
-          Actions.login();
-      } else {
-          alert(responseData['reason']);
-          Actions.refresh();
-      }
-    })
-    .done();
+      .then((response) => response.json())
+      .then((responseData) => {
+        console.log(responseData);
+        if(responseData['code'] != "error") {
+            alert('회원가입 완료! 가입한 정보로 로그인해주세요.');
+            Actions.Login();
+        } else {
+            alert(responseData['reason']);
+            Actions.refresh();
+        }
+      })
+      .done();
+    }
+
   };
   render() {
     return (

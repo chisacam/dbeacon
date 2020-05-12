@@ -1,19 +1,63 @@
-import React from 'react';
+import React from "react";
 import {
   StyleSheet,
   View,
   Text,
   TextInput,
   TouchableHighlight,
-} from 'react-native';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
+  Image,
+  Alert,
+} from "react-native";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import alert from "../App";
 
 export default class EditProfile extends React.Component {
-  state = {
-    name: '이름을 입력해 주세요',
-    email: 'temp@email.com',
-    password: '',
-    passwordCheck: '',
+  constructor(props) {
+    super(props);
+    this.state = {
+      password: "",
+      passwordCheck: "",
+    }
+  }
+
+  _editProfile = (id, password, passwordCheck) => {
+    if (password === passwordCheck) {
+      fetch("https://api.chiyak.duckdns.org/editProfile", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          // uid: UserInfo["uid"],
+          id: id,
+          password: password,
+        }),
+      })
+        .then((res) => res.json())
+        .then((json) => {
+          // json 결과에 따라 로직 처리
+          if (json.code !== "error") {
+            Alert.alert(
+              "알림",
+              "비밀번호가 변경되었습니다. 다시 로그인해주세요.",
+              {
+                text: "확인"
+              }
+            )
+          } else {
+            Alert.alert(
+              "알림",
+              json.errorValue,
+              {
+                text: "확인"
+              }
+            )
+          }
+        });
+    } else {
+      alert("Error", "비밀번호가 다릅니다");
+    }
   };
 
   render() {
@@ -23,51 +67,56 @@ export default class EditProfile extends React.Component {
           <Text style={styles.navText}>정보수정</Text>
         </View>
         <View style={styles.main}>
-          <Text style={styles.boldText}>이름</Text>
-          <View style={styles.inputContainer}>
+          <View style={[styles.inputContainer, { backgroundColor: "#e2e2e2" }]}>
+            <Image
+              style={styles.inputIcon}
+              source={require("../assets/grayUser.png")}
+            />
             <TextInput
               style={styles.inputs}
-              placeholder="여기에 원래 이름을 넣으세요"
+              // placeholder={ UserInfo['uid'] }
+              placeholder="유저아이디"
+              editable={false}
               underlineColorAndroid="transparent"
-              onChangeText={name => this.setState({ name })}
             />
           </View>
-          <Text style={styles.boldText}>이메일</Text>
           <View style={styles.inputContainer}>
-            <TextInput
-              style={styles.inputs}
-              placeholder="여기에 원래 이메일을 넣으세요"
-              keyboardType="email-address"
-              underlineColorAndroid="transparent"
-              onChangeText={name => this.setState({ name })}
+            <Image
+              style={styles.inputIcon}
+              source={require("../assets/key.png")}
             />
-          </View>
-          <Text style={styles.boldText}>비밀번호</Text>
-          <View style={styles.inputContainer}>
             <TextInput
               style={styles.inputs}
-              placeholder="비밀번호"
+              placeholder="변경할 비밀번호"
               secureTextEntry={true}
               underlineColorAndroid="transparent"
-              onChangeText={password => this.setState({ password })}
+              onChangeText={(password) => this.setState({ password })}
             />
           </View>
-          <Text style={styles.boldText}>비밀번호 확인</Text>
           <View style={styles.inputContainer}>
+            <Image
+              style={styles.inputIcon}
+              source={require("../assets/key.png")}
+            />
             <TextInput
               style={styles.inputs}
               placeholder="비밀번호 확인"
               secureTextEntry={true}
               underlineColorAndroid="transparent"
-              onChangeText={password => this.setState({ password })}
+              onChangeText={(passwordCheck) => this.setState({ passwordCheck })}
             />
           </View>
-          <View style={{ flex: 0.5 }} />
-          <View style={{ flex: 1, alignItems: 'center' }}>
+          <View style={{ height: 100 }} />
+          <View style={{ flex: 1, alignItems: "center" }}>
             <TouchableHighlight
               style={[styles.buttonContainer, styles.loginButton]}
-              onPress={null}>
-              <Text style={{ fontSize: 18, color: 'white' }}>수정완료</Text>
+              onPress={this._editProfile(
+                this.state.id,
+                this.state.password,
+                this.state.passwordCheck
+              )}
+            >
+              <Text style={{ fontSize: 18, color: "white" }}>수정완료</Text>
             </TouchableHighlight>
           </View>
         </View>
@@ -78,25 +127,29 @@ export default class EditProfile extends React.Component {
 
 const styles = StyleSheet.create({
   main: {
-    flex: 7,
-    alignContent: 'center',
-    justifyContent: 'center',
+    flex: 9,
+    alignContent: "center",
+    justifyContent: "center",
+    alignItems: "center",
   },
   navView: {
-    backgroundColor: '#007bff',
-    justifyContent: 'flex-end',
-    flex: 1,
+    width: "100%",
+    height: "10%",
+    backgroundColor: "#007bff",
+    justifyContent: "center",
   },
   navText: {
+    marginTop: 15,
     marginLeft: 15,
-    marginBottom: 10,
-    fontSize: 30,
-    fontWeight: 'bold',
-    color: 'white',
+    fontSize: 25,
+    fontWeight: "bold",
+    alignContent: "center",
+    alignItems: "center",
+    color: "white",
   },
   boldText: {
     fontSize: 25,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginLeft: 20,
     marginTop: 20,
   },
@@ -104,30 +157,36 @@ const styles = StyleSheet.create({
     fontSize: 15,
     height: 45,
     marginLeft: 16,
-    borderBottomColor: '#FFFFFF',
+    borderBottomColor: "#FFFFFF",
     flex: 1,
   },
   inputContainer: {
-    borderBottomColor: 'grey',
-    backgroundColor: '#FFFFFF',
+    borderBottomColor: "grey",
+    backgroundColor: "#FFFFFF",
     borderRadius: 30,
     borderBottomWidth: 1,
     width: 250,
     height: 50,
     marginBottom: 20,
-    marginLeft: 20,
-    flexDirection: 'row',
-    alignItems: 'center',
+    marginTop: 30,
+    flexDirection: "row",
+    alignItems: "center",
   },
   buttonContainer: {
     height: 50,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
     width: 200,
     borderRadius: 30,
   },
   loginButton: {
-    backgroundColor: '#00b5ec',
+    backgroundColor: "#00b5ec",
+  },
+  inputIcon: {
+    width: 30,
+    height: 30,
+    marginLeft: 15,
+    justifyContent: "center",
   },
 });

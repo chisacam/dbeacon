@@ -57,7 +57,7 @@ export default class MyPage extends React.Component {
       <SafeAreaProvider>
         <View style={styles.navBar}>
           {/* 상단 바 */}
-          <Text style={styles.navText}>근태 기록</Text>
+          <Text style={styles.navText}>근태기록</Text>
         </View>
         <View style={styles.selectBox}>
           {/* 선택 박스 */}
