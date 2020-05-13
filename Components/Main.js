@@ -279,9 +279,10 @@ class Mainpage extends Component {
     return (
       <View style={styles.container}>
         <NavBar />
+        <View style={{width:"100%", height:"1%"}}></View>
         <User />
         <ButtonGroup />
-        <View style={{width:"100%", height:"5%"}}></View>
+        <View style={{width:"100%", height:"2%"}}></View>
       </View>
     );
   }
@@ -295,13 +296,12 @@ const styles = StyleSheet.create({
 
   navBar: {
     width: "100%",
-    height: "10%",
+    height: "7%",
     backgroundColor: "#007bff",
     justifyContent: "center",
   },
 
   navBarText: {
-    marginTop: 15,
     marginLeft: 15,
     fontSize: 25,
     fontWeight: "bold",
