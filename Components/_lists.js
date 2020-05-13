@@ -14,7 +14,7 @@ export default class ScrollList extends Component {
   }
 
   _getData = async () => {
-    console.log(this.props.startTime)
+    // console.log(this.props.startTime)
     const val = await AsyncStorage.getItem(DBEACON_TOKEN);
     if(val !== null){
       const UserInfo = JSON.parse(val);

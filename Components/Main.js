@@ -7,7 +7,8 @@ import {
   Platform,
   StatusBar,
   TouchableOpacity,
-  DeviceEventEmitter
+  DeviceEventEmitter,
+  Alert
 } from "react-native";
 import {
   Actions,
@@ -41,7 +42,7 @@ class NavBar extends Component {
   render() {
     return (
       <View style={styles.navBar}>
-        <Text style={styles.navBarText}>DBeacon</Text>
+        <Text style={styles.navBarText}>근태관리</Text>
       </View>
     );
   }
@@ -120,8 +121,21 @@ class User extends Component {
   async _userLogout() {
     try {
       await AsyncStorage.removeItem(DBEACON_TOKEN);
-      alert("로그아웃 완료!");
-      Actions.Login();
+      Alert.alert(
+        "알림", "로그아웃 하시겠습니까?",
+        [
+          { 
+            text: "아니요"
+          },
+          {
+            text: "네",
+            onPress: () => {
+              alert("로그아웃 완료");
+              Actions.Login();
+            }
+          }
+        ]
+      )
     } catch (error) {
       console.log('AsyncStorage error: ' + error.message);
     }
@@ -171,7 +185,7 @@ class User extends Component {
               alignItems: "center",
               justifyContent: "center",
             }}
-            onPress={() => null}
+            onPress={() => Actions.CheckPass()}
           >
             <Text style={{fontSize: 18, fontWeight: 'bold'}}>정보수정</Text>
           </TouchableOpacity>
