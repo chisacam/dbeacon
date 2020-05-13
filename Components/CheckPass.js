@@ -16,12 +16,16 @@ export default class CheckPass extends React.Component {
   };
 
   _checkPassAndGo = (pass) => {
+    
+    // 서버작업시 이 코드를 지우고 주석을 활성화 시킬 것
     Actions.EditProfile();
+
+
     // 서버의 패스워드와 검사하고 값 리턴
     // if ( pass === "" ) {
     //   _errorAlert("Error", "비밀번호를 입력하세요");
     // } else {
-    //   fetch( "https://api.chiyak.duckdns.org/passcheck", {
+    //   fetch( "https://api.chiyak.duckdns.org/users/passcheck", {
     //     method: "POST",
     //     headers: {
     //       "Accept": "application/json",

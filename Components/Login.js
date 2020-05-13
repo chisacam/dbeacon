@@ -109,7 +109,7 @@ export default class LoginView extends Component {
 
         <TouchableHighlight
           style={styles.buttonContainer}
-          onPress={() => this.onClickListener()}
+          onPress={() => Actions.LostPass()}
         >
           <Text>비밀번호를 잊으셨나요?</Text>
         </TouchableHighlight>

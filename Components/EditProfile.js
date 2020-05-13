@@ -22,7 +22,7 @@ export default class EditProfile extends React.Component {
 
   _editProfile = (id, password, passwordCheck) => {
     if (password === passwordCheck) {
-      fetch("https://api.chiyak.duckdns.org/editProfile", {
+      fetch("https://api.chiyak.duckdns.org/users/edit", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -30,7 +30,6 @@ export default class EditProfile extends React.Component {
         },
         body: JSON.stringify({
           // uid: UserInfo["uid"],
-          id: id,
           password: password,
         }),
       })
@@ -74,7 +73,7 @@ export default class EditProfile extends React.Component {
             />
             <TextInput
               style={styles.inputs}
-              // placeholder={ UserInfo['uid'] }
+              // placeholder={ UserInfo['id'] }
               placeholder="유저아이디"
               editable={false}
               underlineColorAndroid="transparent"
@@ -110,7 +109,7 @@ export default class EditProfile extends React.Component {
           <View style={{ flex: 1, alignItems: "center" }}>
             <TouchableHighlight
               style={[styles.buttonContainer, styles.loginButton]}
-              onPress={this._editProfile(
+              onPress={() => this._editProfile(
                 this.state.id,
                 this.state.password,
                 this.state.passwordCheck

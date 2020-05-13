@@ -7,10 +7,12 @@ import {
   TouchableHighlight,
   Image,
   Platform,
-  StatusBar
+  StatusBar,
+  ScrollView
 } from "react-native";
 import { Actions } from "react-native-router-flux";
 import * as AppFunction from "../App"
+import { Picker } from '@react-native-community/picker'
 
 export default class Register extends Component {
   constructor(props) {
@@ -22,10 +24,12 @@ export default class Register extends Component {
       password: "",
       passwordCheck: "",
       depart: "",
+      questionType: "treasure",
+      questionAnswer: ""
     }
   } 
 
-  join = (name, email, pass, passre, depart) => {
+  join = (name, email, pass, passre, depart, questionType, questionAnswer) => {
     if(name === "") {
       AppFunction.alert("Error", "이름을 입력하세요");
     }
@@ -56,7 +60,9 @@ export default class Register extends Component {
           userid: email,
           userpw: pass, 
           userpwre: passre,
-          depart:depart
+          depart:depart,
+          questionType: questionType,
+          questionAnswer: questionAnswer
         })
       })
       .then((response) => response.json())
@@ -142,11 +148,28 @@ export default class Register extends Component {
             onChangeText={(depart) => this.setState({ depart })}
           />
         </View>
-
+        <Picker 
+          selectedValue={this.state.questionType}
+          style={{ height: 50, width: 200 }}
+          onValueChange={(itemValue, itemIndex) => {
+            this.setState({ questionType: itemValue })
+          }}
+        >
+          <Picker.Item label="내 보물 1호는?" value="treasure" />
+          <Picker.Item label="나의 고향은?" value="hometown" />
+          <Picker.Item label="어릴적 내 별명은?" value="nickname" />
+        </Picker>
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={styles.inputs}
+            placeholder="답변을 입력하세요"
+            underlineColorAndroid="transparent"
+            onChangeText={( questionAnswer ) => this.setState({ questionAnswer })}
+          />
+        </View>
         <TouchableHighlight
           style={[styles.buttonContainer, styles.loginButton]}
-          // 회원가입 버튼 이벤트
-          onPress = {() => this.join(this.state.name,this.state.email, this.state.password, this.state.passwordCheck, this.state.depart)}
+          onPress = {() => this.join(this.state.name,this.state.email, this.state.password, this.state.passwordCheck, this.state.depart, this.state.questionType, this.state.questionAnswer)}
         >
           <Text style={styles.loginText}>회원가입</Text>
         </TouchableHighlight>
