@@ -29,7 +29,7 @@ export default class EditProfile extends React.Component {
           Accept: "application/json",
         },
         body: JSON.stringify({
-          // uid: UserInfo["uid"],
+          uid: UserInfo["uid"],
           password: password,
         }),
       })

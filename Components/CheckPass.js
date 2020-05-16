@@ -6,45 +6,65 @@ import {
   TouchableHighlight,
   StyleSheet,
   Image,
+  Alert,
 } from "react-native";
 import { Actions } from "react-native-router-flux";
 import alert from "../App";
+import AsyncStorage from '@react-native-community/async-storage';
+
+const DBEACON_TOKEN = 'dblab_dbeacon';
 
 export default class CheckPass extends React.Component {
   state = {
+    UID: "",
     password: "",
   };
+  
+  async _getUserInfo() {
+    try{
+      const val = await AsyncStorage.getItem(DBEACON_TOKEN);
+      if(val !== null){
+        const UserInfo = JSON.parse(val);
+        this.setState({UserName:UserInfo['name']});
+        this.setState({UID:UserInfo['uid']});
+        this.setState({USerEmail:UserInfo['uid']});
+      }
+      Alert.alert("AA", this.state.UID);
+    }
+    catch(e) {
+      console.log(e);
+    }
+  } 
 
-  _checkPassAndGo = (pass) => {
-    
-    // 서버작업시 이 코드를 지우고 주석을 활성화 시킬 것
-    Actions.EditProfile();
+  componentDidMount() {
+    this._getUserInfo();
+  }
 
-
-    // 서버의 패스워드와 검사하고 값 리턴
-    // if ( pass === "" ) {
-    //   _errorAlert("Error", "비밀번호를 입력하세요");
-    // } else {
-    //   fetch( "https://api.chiyak.duckdns.org/users/passcheck", {
-    //     method: "POST",
-    //     headers: {
-    //       "Accept": "application/json",
-    //       "Content-Type": "application/json",
-    //     },
-    //     body: JSON.stringify({
-    //       uid: UserInfo["uid"],
-    //       pass: pass,
-    //     }),
-    //   })
-    //     .then( (res) => res.json() )
-    //     .then( (json) => {
-    //       if (json.code !== "error") {
-    //         Actions.EditProfile();
-    //       } else {
-    //         alert("Error", "비밀번호를 확인해주세요")
-    //       }
-    //     });
-    // }
+  _checkPassAndGo = (UID, pass) => {
+    if ( pass === "" ) {
+      _errorAlert("Error", "비밀번호를 입력하세요");
+    } else {
+      this._getUserInfo();
+      fetch( "https://api.chiyak.duckdns.org/users/passcheck", {
+        method: "POST",
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          uid: UID,
+          password: pass,
+        }),
+      })
+        .then( (res) => res.json() )
+        .then( (json) => {
+          if (json.code !== "error") {
+            Actions.EditProfile({ uid: UID, email: });
+          } else {
+            alert("Error", "비밀번호를 확인해주세요")
+          }
+        });
+    }
   };
 
   render() {
@@ -70,7 +90,7 @@ export default class CheckPass extends React.Component {
 
           <TouchableHighlight
             style={styles.buttonContainer}
-            onPress={() => this._checkPassAndGo(this.state.password)}
+            onPress={() => this._checkPassAndGo(this.state.UID, this.state.password)}
           >
             <Text style={styles.inputText}>제출</Text>
           </TouchableHighlight>
