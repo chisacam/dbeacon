@@ -8,77 +8,95 @@ import {
   Image,
   Platform,
   StatusBar,
-  ScrollView
+  ScrollView,
 } from "react-native";
 import { Actions } from "react-native-router-flux";
-import * as AppFunction from "../App"
-import { Picker } from '@react-native-community/picker'
+import * as AppFunction from "../App";
+import { Picker } from "@react-native-community/picker";
 
 export default class Register extends Component {
   constructor(props) {
     super(props);
-    
+
     this.state = {
       name: "",
       email: "",
       password: "",
       passwordCheck: "",
       depart: "",
+      phonenumber: "",
       questionType: "treasure",
-      questionAnswer: ""
-    }
-  } 
+      questionAnswer: "",
+      departList: []
+    };
+  }
 
-  join = (name, email, pass, passre, depart, questionType, questionAnswer) => {
-    if(name === "") {
-      AppFunction.alert("Error", "이름을 입력하세요");
-    }
-    else if (email === "") {
-      AppFunction.alert("Error", "이메일을 입력하세요");
-    }
-    else if (pass === "") {
-      AppFunction.alert("Error", "비밀번호를 입력하세요");
-    }
-    else if (passre === "") {
-      AppFunction.alert("Error", "비밀번호를 다시 입력하세요");
-    }
-    else if (depart === "") {
-      AppFunction.alert("Error", "부서를 입력하세요");
-    }
-    else if (pass !== passre) {
-      AppFunction.alert("Error", "비밀번호가 일치하지 않습니다");
-    }
-    else {
-      fetch("https://api.chiyak.duckdns.org/users/signup", {
-        method: "POST", 
+  componentDidMount() {
+    this.setState({ departList: [
+      "서울", "부산", "마산", "창원", "김해", "영동", "울산", "대전", "대구", "전주", "군산"
+    ]})
+    // this._getDepart();
+  }
+
+  _getDepart = () => {
+    fetch("https://api.chiyak.duckdns.org/departs", {
+      method: "GET",
         headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
+          "Accept": "application/json",
+          "Content-Type": "application/json",
+        },
+        // body: JSON.stringify({ }),
+      })
+        .then( (res) => res.json() )
+        .then( (json) => {
+            this.setState({ departList: json })
+      });
+  }
+
+  join = (name, email, pass, passre, depart, phonenumber, questionType, questionAnswer) => {
+    if (name === "") {
+      AppFunction.alert("Error", "이름을 입력하세요");
+    } else if (email === "") {
+      AppFunction.alert("Error", "이메일을 입력하세요");
+    } else if (pass === "") {
+      AppFunction.alert("Error", "비밀번호를 입력하세요");
+    } else if (passre === "") {
+      AppFunction.alert("Error", "비밀번호를 다시 입력하세요");
+    } else if (depart === "") {
+      AppFunction.alert("Error", "부서를 입력하세요");
+    } else if (pass !== passre) {
+      AppFunction.alert("Error", "비밀번호가 일치하지 않습니다");
+    } else {
+      fetch("https://api.chiyak.duckdns.org/users/signup", {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           name: name,
           userid: email,
-          userpw: pass, 
+          userpw: pass,
           userpwre: passre,
-          depart:depart,
+          depart: depart,
+          phonenumber: phonenumber,
           questionType: questionType,
-          questionAnswer: questionAnswer
-        })
+          questionAnswer: questionAnswer,
+        }),
       })
-      .then((response) => response.json())
-      .then((responseData) => {
-        console.log(responseData);
-        if(responseData['code'] != "error") {
-            alert('회원가입 완료! 가입한 정보로 로그인해주세요.');
+        .then((response) => response.json())
+        .then((responseData) => {
+          console.log(responseData);
+          if (responseData["code"] != "error") {
+            alert("회원가입 완료! 가입한 정보로 로그인해주세요.");
             Actions.Login();
-        } else {
-            alert(responseData['reason']);
+          } else {
+            alert(responseData["reason"]);
             Actions.refresh();
-        }
-      })
-      .done();
+          }
+        })
+        .done();
     }
-
   };
   render() {
     return (
@@ -100,7 +118,6 @@ export default class Register extends Component {
             style={styles.inputIcon}
             source={require("../assets/mail.png")}
           />
-
           <TextInput
             style={styles.inputs}
             placeholder="이메일"
@@ -141,18 +158,38 @@ export default class Register extends Component {
             style={styles.inputIcon}
             source={require("../assets/org.png")}
           />
+          <Picker
+            style={{ height: 50, width: 200 }}
+            onValueChange={(itemValue, itemIndex) => {
+            this.setState({ questionType: itemValue });
+          }}
+        >
+          {this.state.departList.map((prop, key) => {
+            return(
+              <Picker.Item label={prop} value={prop} />
+            )
+          })}
+
+        </Picker>
+        </View>
+        <View style={styles.inputContainer}>
+          <Image
+            style={styles.inputIcon}
+            source={require("../assets/phone.png")}
+          />
           <TextInput
             style={styles.inputs}
-            placeholder="조직"
+            placeholder="전화번호를 입력하세요"
             underlineColorAndroid="transparent"
-            onChangeText={(depart) => this.setState({ depart })}
+            keyboardType="number-pad"
+            onChangeText={(phonenumber) => this.setState({ phonenumber })}
           />
         </View>
-        <Picker 
+        <Picker
           selectedValue={this.state.questionType}
           style={{ height: 50, width: 200 }}
           onValueChange={(itemValue, itemIndex) => {
-            this.setState({ questionType: itemValue })
+            this.setState({ questionType: itemValue });
           }}
         >
           <Picker.Item label="내 보물 1호는?" value="treasure" />
@@ -164,12 +201,23 @@ export default class Register extends Component {
             style={styles.inputs}
             placeholder="답변을 입력하세요"
             underlineColorAndroid="transparent"
-            onChangeText={( questionAnswer ) => this.setState({ questionAnswer })}
+            onChangeText={(questionAnswer) => this.setState({ questionAnswer })}
           />
         </View>
         <TouchableHighlight
           style={[styles.buttonContainer, styles.loginButton]}
-          onPress = {() => this.join(this.state.name,this.state.email, this.state.password, this.state.passwordCheck, this.state.depart, this.state.questionType, this.state.questionAnswer)}
+          onPress={() =>
+            this.join(
+              this.state.name,
+              this.state.email,
+              this.state.password,
+              this.state.passwordCheck,
+              this.state.phonenumber,
+              this.state.depart,
+              this.state.questionType,
+              this.state.questionAnswer
+            )
+          }
         >
           <Text style={styles.loginText}>회원가입</Text>
         </TouchableHighlight>

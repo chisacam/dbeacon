@@ -27,7 +27,7 @@ export default class CheckPass extends React.Component {
         const UserInfo = JSON.parse(val);
         this.setState({UID:UserInfo['uid']});
       }
-      Alert.alert(this.state.UID)
+      // Alert.lert(this.state.UID)
     }
     catch(e) {
       console.log(e);
