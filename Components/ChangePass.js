@@ -17,19 +17,22 @@ export default class LostPass extends React.Component {
     super(props);
 
     this.state = {
-      email: "",
-      questionType: "treasure",
-      questionAnswer: "",
+      email: this.props.email,
+      password: "",
+      passwordRe: ""
     };
   }
 
-  _lostPass = (email, questionType, questionAnswer) => {
-    if (email === "") {
-      alert("알림", "이메일을 입력하세요");
-    } else if (questionAnswer === "") {
-      alert("알림", "답변을 입력하세요");
+
+  _changePass = (email, pass, passre) => {
+    if (pass === "") {
+      alert("알림", "비밀번호를 입력하세요");
+    } else if (passre === "") {
+      alert("알림", "비밀번호 확인을 입력하세요");
+    } else if (pass !== passre) {
+      alert("알림", "비밀번호가 일치하지 않습니다.");
     } else {
-      fetch("https://api.chiyak.duckdns.org/users/lostpass", {
+      fetch("https://api.chiyak.duckdns.org/users/passchange", {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -37,14 +40,15 @@ export default class LostPass extends React.Component {
         },
         body: JSON.stringify({
           email: email,
-          questionType: questionType,
-          questionAnswer: questionAnswer,
+          password: pass
         }),
       })
         .then((response) => response.json())
         .then((responseData) => {
+          console.log(responseData);
           if (responseData["code"] != "error") {
-            Actions.ChangePass({ email: email });
+            alert("비밀번호 변경 완료! 변경된 비밀번호로 로그인하세요.");
+            Actions.Login();
           } else {
             alert(responseData["reason"]);
             Actions.refresh();
@@ -62,54 +66,43 @@ export default class LostPass extends React.Component {
         </View>
         <View style={styles.main}>
           <View style={styles.main}>
-            <View style={styles.inputContainer}>
-              <Image
-                style={styles.inputIcon}
-                source={require("../assets/mail.png")}
-              />
-              <TextInput
-                style={styles.inputs}
-                placeholder="이메일을 입력하세요"
-                underlineColorAndroid="transparent"
-                onChangeText={ (email) => this.setState({ email })}
-              />
-            </View>
-            <Picker
-              selectedValue={this.state.questionType}
-              style={{ height: 50, width: 200 }}
-              onValueChange={(itemValue, itemIndex) => {
-                this.setState({ questionType: itemValue });
-              }}
-            >
-              <Picker.Item label="내 보물 1호는?" value="treasure" />
-              <Picker.Item label="나의 고향은?" value="hometown" />
-              <Picker.Item label="어릴적 내 별명은?" value="nickname" />
-            </Picker>
-            <View style={styles.inputContainer}>
-              <Image
-                style={styles.inputIcon}
-                source={require("../assets/empty.png")}
-              />
-              <TextInput
-                style={styles.inputs}
-                placeholder="답변을 입력하세요"
-                underlineColorAndroid="transparent"
-                onChangeText={(questionAnswer) =>
-                  this.setState({ questionAnswer })
-                }
-              />
-            </View>
+          <View style={styles.inputContainer}>
+          <Image
+            style={styles.inputIcon}
+            source={require("../assets/key.png")}
+          />
+          <TextInput
+            style={styles.inputs}
+            placeholder="비밀번호"
+            secureTextEntry={true}
+            underlineColorAndroid="transparent"
+            onChangeText={(password) => this.setState({ password })}
+          />
+        </View>
+        <View style={styles.inputContainer}>
+          <Image
+            style={styles.inputIcon}
+            source={require("../assets/key.png")}
+          />
+          <TextInput
+            style={styles.inputs}
+            placeholder="비밀번호 재입력"
+            secureTextEntry={true}
+            underlineColorAndroid="transparent"
+            onChangeText={( passwordRe ) => this.setState({ passwordRe })}
+          />
+        </View>
             <View style={{ height: 100 }} />
             <TouchableHighlight
               style={[styles.buttonContainer, styles.loginButton]}
-              onPress={() => this._lostPass(
+              onPress={() => this._changePass(
                   this.state.email,
-                  this.state.questionType,
-                  this.state.questionAnswer
+                  this.state.password,
+                  this.state.passwordRe
                 )
               }
             >
-              <Text style={{ color: 'white' }}>확인</Text>
+              <Text style={{ color: 'white' }}>비밀번호 변경</Text>
             </TouchableHighlight>
           </View>
         </View>
