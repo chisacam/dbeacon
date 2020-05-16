@@ -117,10 +117,10 @@ class User extends Component {
     catch(e) {
       console.log(e);
     }
-  } 
-  async _userLogout() {
+  }  
+
+  _userLogout() {
     try {
-      await AsyncStorage.removeItem(DBEACON_TOKEN);
       Alert.alert(
         "알림", "로그아웃 하시겠습니까?",
         [
@@ -130,6 +130,7 @@ class User extends Component {
           {
             text: "네",
             onPress: () => {
+              AsyncStorage.removeItem(DBEACON_TOKEN);
               alert("로그아웃 완료");
               Actions.Login();
             }

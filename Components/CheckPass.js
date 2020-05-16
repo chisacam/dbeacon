@@ -25,11 +25,9 @@ export default class CheckPass extends React.Component {
       const val = await AsyncStorage.getItem(DBEACON_TOKEN);
       if(val !== null){
         const UserInfo = JSON.parse(val);
-        this.setState({UserName:UserInfo['name']});
         this.setState({UID:UserInfo['uid']});
-        this.setState({USerEmail:UserInfo['uid']});
       }
-      Alert.alert("AA", this.state.UID);
+      Alert.alert(this.state.UID)
     }
     catch(e) {
       console.log(e);
@@ -42,7 +40,7 @@ export default class CheckPass extends React.Component {
 
   _checkPassAndGo = (UID, pass) => {
     if ( pass === "" ) {
-      _errorAlert("Error", "비밀번호를 입력하세요");
+      Alert.alert("알림", "비밀번호를 입력하세요");
     } else {
       this._getUserInfo();
       fetch( "https://api.chiyak.duckdns.org/users/passcheck", {
@@ -59,9 +57,9 @@ export default class CheckPass extends React.Component {
         .then( (res) => res.json() )
         .then( (json) => {
           if (json.code !== "error") {
-            Actions.EditProfile({ uid: UID, email: });
+            Actions.EditProfile({ UID: UID });
           } else {
-            alert("Error", "비밀번호를 확인해주세요")
+            Alert.alert("알림", "비밀번호를 확인해주세요")
           }
         });
     }

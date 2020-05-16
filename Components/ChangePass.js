@@ -11,36 +11,18 @@ import {
 import { Actions } from "react-native-router-flux";
 import { Picker } from "@react-native-community/picker";
 import { alert } from "../App"
-import AsyncStorage from '@react-native-community/async-storage';
-
-async function _getUserInfo() {
-  try{
-    const val = await AsyncStorage.getItem(DBEACON_TOKEN);
-    if(val !== null){
-      const UserInfo = JSON.parse(val);
-      this.setState({UserName:UserInfo['name']});
-      this.setState({UserDep:UserInfo['depart']});
-    }
-  }
-  catch(e) {
-    console.log(e);
-  }
-} 
 
 export default class LostPass extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
+      email: this.props.email,
       password: "",
       passwordRe: ""
     };
   }
 
-  componentDidMount() {
-    _getUserInfo();
-    Alert.alert("알림", this.props.email);
-  }
 
   _changePass = (email, pass, passre) => {
     if (pass === "") {
@@ -50,15 +32,15 @@ export default class LostPass extends React.Component {
     } else if (pass !== passre) {
       alert("알림", "비밀번호가 일치하지 않습니다.");
     } else {
-      fetch("https://api.chiyak.duckdns.org/users/edit", {
+      fetch("https://api.chiyak.duckdns.org/users/passchange", {
         method: "POST",
         headers: {
           Accept: "application/json",
-          "Content-Type": "application/json",
+          "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          uid: UserInfo["uid"],
-          pass: pass
+          email: email,
+          password: pass
         }),
       })
         .then((response) => response.json())
@@ -113,10 +95,10 @@ export default class LostPass extends React.Component {
             <View style={{ height: 100 }} />
             <TouchableHighlight
               style={[styles.buttonContainer, styles.loginButton]}
-              onPress={() => this._lostPass(
+              onPress={() => this._changePass(
                   this.state.email,
-                  this.state.questionType,
-                  this.state.questionAnswer
+                  this.state.password,
+                  this.state.passwordRe
                 )
               }
             >

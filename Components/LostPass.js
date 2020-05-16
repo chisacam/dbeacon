@@ -33,7 +33,7 @@ export default class LostPass extends React.Component {
         method: "POST",
         headers: {
           Accept: "application/json",
-          "Content-Type": "application/json",
+          "Content-Type": "application/json"
         },
         body: JSON.stringify({
           email: email,
@@ -65,11 +65,11 @@ export default class LostPass extends React.Component {
             <View style={styles.inputContainer}>
               <Image
                 style={styles.inputIcon}
-                source={require("../assets/user.png")}
+                source={require("../assets/mail.png")}
               />
               <TextInput
                 style={styles.inputs}
-                placeholder="아이디를 입력하세요"
+                placeholder="이메일을 입력하세요"
                 underlineColorAndroid="transparent"
                 onChangeText={ (email) => this.setState({ email })}
               />
