@@ -2,17 +2,22 @@ import React, { Component } from "react";
 import {
   StyleSheet,
   BackHandler,
+  Alert
 } from "react-native";
 import Main from "./Components/Main";
 import Login from "./Components/Login";
 import Register from "./Components/Register";
 import MyPage from "./Components/MyPage";
+import EditProfile from "./Components/EditProfile";
+import CheckPass from "./Components/CheckPass";
+import LostPass from "./Components/LostPass"
 import {
   Scene,
   Router,
   Overlay,
   Modal,
   Stack,
+  Actions,
 } from "react-native-router-flux";
 
 import AsyncStorage from '@react-native-community/async-storage';
@@ -25,6 +30,17 @@ const prefix = Platform.OS === "android" ? "mychat://mychat/" : "mychat://";
 const transitionConfig = () => ({
   screenInterpolator: StackViewStyleInterpolator.forFadeFromBottomAndroid,
 });
+
+export function alert (title, msg) {
+  Alert.alert(
+    title,
+    msg,
+    [
+      { text: "확인" }
+    ],
+    { cancelable: true }
+  )
+}
 
 export default class App extends Component {
   state = {
@@ -42,16 +58,6 @@ export default class App extends Component {
 
   componentDidMount() {
     this.isLoggedin();
-    this.homeBackPressHandler = BackHandler.addEventListener(
-      "homeBackPress",
-      () => {
-        BackHandler.exitApp();
-      }
-    );
-  }
-
-  componentWillUnmount() {
-    this.homeBackPressHandler.remove();
   }
 
   render() {
@@ -72,6 +78,9 @@ export default class App extends Component {
                   <Scene key="Login" component={Login} title="Login" />
                   <Scene key="Register" component={Register} title="Register" />
                   <Scene key="MyPage" component={MyPage} title="MyPage" />
+                  <Scene key="EditProfile" component={EditProfile} title="EditProfile" />
+                  <Scene key="CheckPass" component={CheckPass} title="CheckPass" />
+                  <Scene key="LostPass" component={LostPass} title="LostPass" />
                 </Stack>
               ) : (
                 <Stack
@@ -83,6 +92,9 @@ export default class App extends Component {
                   <Scene key="Login" component={Login} title="Login" initial />
                   <Scene key="Register" component={Register} title="Register" />
                   <Scene key="MyPage" component={MyPage} title="MyPage" />
+                  <Scene key="EditProfile" component={EditProfile} title="EditProfile" />
+                  <Scene key="CheckPass" component={CheckPass} title="CheckPass" />
+                  <Scene key="LostPass" component={LostPass} title="LostPass" />
                 </Stack>
               )}
             </Modal>
