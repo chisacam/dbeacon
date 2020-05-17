@@ -6,6 +6,7 @@ import {
   TextInput,
   TouchableHighlight,
   Image,
+  Alert,
 } from "react-native";
 import {
   Actions
@@ -54,9 +55,14 @@ export default class LoginView extends Component {
     })
     .then((response) => response.json())
     .then((responseData) => {
+      if(responseData.code === "success") {
+        this._onValueChange(responseData);
+        Actions.Main();
+      } else {
+        Alert.alert("알림", "가입정보를 확인하세요.");
+        Actions.refresh();
+      }
       console.log(responseData);
-      this._onValueChange(responseData);
-      Actions.Main();
       // if (responseData["code"] != "error") {
       //   alert("회원가입 완료! 가입한 정보로 로그인해주세요.");
       //   Actions.login();

@@ -11,6 +11,7 @@ import MyPage from "./Components/MyPage";
 import EditProfile from "./Components/EditProfile";
 import CheckPass from "./Components/CheckPass";
 import LostPass from "./Components/LostPass"
+import ChangePass from "./Components/ChangePass"
 import {
   Scene,
   Router,
@@ -81,6 +82,7 @@ export default class App extends Component {
                   <Scene key="EditProfile" component={EditProfile} title="EditProfile" />
                   <Scene key="CheckPass" component={CheckPass} title="CheckPass" />
                   <Scene key="LostPass" component={LostPass} title="LostPass" />
+                  <Scene key="ChangePass" component={ChangePass} title="ChangePass" />
                 </Stack>
               ) : (
                 <Stack
@@ -95,6 +97,7 @@ export default class App extends Component {
                   <Scene key="EditProfile" component={EditProfile} title="EditProfile" />
                   <Scene key="CheckPass" component={CheckPass} title="CheckPass" />
                   <Scene key="LostPass" component={LostPass} title="LostPass" />
+                  <Scene key="ChangePass" component={ChangePass} title="ChangePass" />
                 </Stack>
               )}
             </Modal>

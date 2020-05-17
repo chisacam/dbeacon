@@ -10,52 +10,67 @@ import {
 } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import alert from "../App";
+import { Actions } from "react-native-router-flux";
+import AsyncStorage from '@react-native-community/async-storage';
+const DBEACON_TOKEN = 'dblab_dbeacon';
 
 export default class EditProfile extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      UID: "",
       password: "",
       passwordCheck: "",
+    };
+  }
+
+  async _getUserInfo() {
+    try {
+      const val = await AsyncStorage.getItem(DBEACON_TOKEN);
+      if (val !== null) {
+        const UserInfo = JSON.parse(val);
+        this.setState({ UID: UserInfo["uid"] });
+      }
+      // Alert.alert(this.state.UID)
+    } catch (e) {
+      console.log(e);
     }
   }
 
-  _editProfile = (id, password, passwordCheck) => {
-    if (password === passwordCheck) {
+  componentDidMount() {
+    this._getUserInfo();
+  }
+
+  _editProfile = (UID, password, passwordCheck) => {
+    if (password === "") {
+      Alert.alert("알림", "비밀번호를 입력해주세요");
+    } else if (passwordCheck === "") {
+      Alert.alert("알림", "비밀번호를 재입력해주세요");
+    } else if (password !== passwordCheck) {
+      Alert.alert("알림", "비밀번호가 일치하지 않습니다");
+    } else {
       fetch("https://api.chiyak.duckdns.org/users/edit", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Accept: "application/json",
+          "Accept": "application/json"
         },
         body: JSON.stringify({
-          // uid: UserInfo["uid"],
+          uid: UID,
           password: password,
         }),
       })
         .then((res) => res.json())
-        .then((json) => {
-          // json 결과에 따라 로직 처리
-          if (json.code !== "error") {
-            Alert.alert(
-              "알림",
-              "비밀번호가 변경되었습니다. 다시 로그인해주세요.",
-              {
-                text: "확인"
-              }
-            )
+        .then(async (json) => {
+          if (json['code'] === "success") {
+            await AsyncStorage.removeItem(DBEACON_TOKEN);
+            Alert.alert("알림", "비밀번호가 변경되었습니다.");
+            Actions.Login();
           } else {
-            Alert.alert(
-              "알림",
-              json.errorValue,
-              {
-                text: "확인"
-              }
-            )
+            Alert.alert("알림", json.reason);
+            Actions.refresh();
           }
         });
-    } else {
-      alert("Error", "비밀번호가 다릅니다");
     }
   };
 
@@ -66,19 +81,6 @@ export default class EditProfile extends React.Component {
           <Text style={styles.navText}>정보수정</Text>
         </View>
         <View style={styles.main}>
-          <View style={[styles.inputContainer, { backgroundColor: "#e2e2e2" }]}>
-            <Image
-              style={styles.inputIcon}
-              source={require("../assets/grayUser.png")}
-            />
-            <TextInput
-              style={styles.inputs}
-              // placeholder={ UserInfo['id'] }
-              placeholder="유저아이디"
-              editable={false}
-              underlineColorAndroid="transparent"
-            />
-          </View>
           <View style={styles.inputContainer}>
             <Image
               style={styles.inputIcon}
@@ -109,11 +111,13 @@ export default class EditProfile extends React.Component {
           <View style={{ flex: 1, alignItems: "center" }}>
             <TouchableHighlight
               style={[styles.buttonContainer, styles.loginButton]}
-              onPress={() => this._editProfile(
-                this.state.id,
-                this.state.password,
-                this.state.passwordCheck
-              )}
+              onPress={() =>
+                this._editProfile(
+                  this.state.UID,
+                  this.state.password,
+                  this.state.passwordCheck
+                )
+              }
             >
               <Text style={{ fontSize: 18, color: "white" }}>수정완료</Text>
             </TouchableHighlight>
