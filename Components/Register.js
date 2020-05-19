@@ -161,7 +161,7 @@ export default class Register extends Component {
           <Picker
             style={{ height: 50, width: 200 }}
             onValueChange={(itemValue, itemIndex) => {
-            this.setState({ questionType: itemValue });
+            this.setState({ depart: itemValue });
           }}
         >
           {this.state.departList.map((prop, key) => {
