@@ -59,8 +59,38 @@ export default class App extends Component {
 
   componentDidMount() {
     this.isLoggedin();
+    BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
   }
 
+  componentWillUnmount() {
+    this.exitApp = false;
+    BackHandler.removeEventListener('hardwareBackPress', this.handleBackButton);
+  }
+
+  handleBackButton = () => {
+    // 2000(2초) 안에 back 버튼을 한번 더 클릭 할 경우 앱 종료
+    if (this.exitApp == undefined || !this.exitApp) {
+      if(Actions.currentScene !== 'Main' || Actions.currentScene !== 'Login'){
+        this.exitApp = true;
+
+        this.timeout = setTimeout(
+            () => {
+                this.exitApp = false;
+            },
+            2000    // 2초
+        );
+      } else {
+        this.exitApp = false;
+        Actions.pop();
+      }
+
+    } else {
+        clearTimeout(this.timeout);
+
+        BackHandler.exitApp();  // 앱 종료
+    }
+    return true;
+}
   render() {
     return (
         <Router

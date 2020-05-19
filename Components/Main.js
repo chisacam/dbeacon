@@ -8,22 +8,24 @@ import {
   StatusBar,
   TouchableOpacity,
   DeviceEventEmitter,
-  Alert
+  Alert,
+  BackHandler
 } from "react-native";
 import {
   Actions,
 } from "react-native-router-flux";
 import Beacons from 'react-native-beacons-manager';
-import { SafeAreaView } from 'react-native-safe-area-context';
+
 import {PermissionsAndroid} from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
-import moment from 'moment'
-import { useSafeArea } from 'react-native-safe-area-context'
+
+import DeviceInfo from 'react-native-device-info';
+
 const DBEACON_TOKEN = 'dblab_dbeacon';
 
 async function requestPermission() {
   try {
-    const granted = await PermissionsAndroid.request(
+    const grantedLoc = await PermissionsAndroid.request(
       PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
     );
   } catch (err) {
@@ -31,11 +33,21 @@ async function requestPermission() {
   }
 }
 
-requestPermission();
+async function requestPermissionPhone() {
+  try {
+    const grantedPhone = await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.READ_PHONE_STATE
+    );
+  } catch(e) {
+    console.warn(e);
+  }
+}
 
+requestPermission();
+requestPermissionPhone();
 Beacons.detectIBeacons();
 
-Beacons.startRangingBeaconsInRegion('Region1');
+Beacons.startRangingBeaconsInRegion('Region1', 'e2c56db5-dffb-48b2-b060-d0f5a7109');
 
 class NavBar extends Component {
   //상단바 컴포넌트
@@ -118,7 +130,34 @@ class User extends Component {
       console.log(e);
     }
   }  
-
+  async _getPhoneInfo() {
+    try{
+      phonenumber = await DeviceInfo.getPhoneNumber();
+      if(phonenumber !== null) {
+        const val = await AsyncStorage.getItem(DBEACON_TOKEN);
+        if(val !== null) {
+          const UserInfo = JSON.parse(val);
+          console.log(phonenumber.substr(3) + " " + UserInfo['phone']);
+          if(phonenumber.substr(3) !== UserInfo['phone']){
+            Alert.alert(
+              "알림","전화번호가 일치하지 않거나, 읽을 수 없습니다!",
+              [
+              {
+                text:"종료",
+                onPress:() => {
+                  AsyncStorage.removeItem(DBEACON_TOKEN);
+                  BackHandler.exitApp();
+                }
+              }
+              ]
+            )
+          }
+        }
+      }
+    } catch(e) {
+      console.log(e);
+    }
+  }
   _userLogout() {
     try {
       Alert.alert(
@@ -143,6 +182,7 @@ class User extends Component {
   }
   componentDidMount() {
     this._getUserInfo();
+    this._getPhoneInfo();
   }
   render() {
     return (
