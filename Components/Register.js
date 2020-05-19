@@ -32,9 +32,6 @@ export default class Register extends Component {
   }
 
   componentDidMount() {
-    // this.setState({ departList: [
-    //   "서울", "부산", "마산", "창원", "김해", "영동", "울산", "대전", "대구", "전주", "군산"
-    // ]})
     this._getDepart();
   }
 
@@ -44,8 +41,7 @@ export default class Register extends Component {
         headers: {
           "Accept": "application/json",
           "Content-Type": "application/json",
-        },
-        // body: JSON.stringify({ }),
+        }
       })
         .then( (res) => res.json() )
         .then( (json) => {
@@ -159,6 +155,7 @@ export default class Register extends Component {
             source={require("../assets/org.png")}
           />
           <Picker
+            selectedValue={this.state.depart}
             style={{ height: 50, width: 200 }}
             onValueChange={(itemValue, itemIndex) => {
             this.setState({ depart: itemValue });
