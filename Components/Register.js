@@ -9,6 +9,7 @@ import {
   Platform,
   StatusBar,
   ScrollView,
+  KeyboardAvoidingView
 } from "react-native";
 import { Actions } from "react-native-router-flux";
 import * as AppFunction from "../App";
@@ -96,7 +97,11 @@ export default class Register extends Component {
   };
   render() {
     return (
-      <View style={styles.container}>
+      <KeyboardAvoidingView
+      behavior="height"
+      style={styles.container}
+    >
+      <ScrollView>
         <View style={styles.inputContainer}>
           <Image
             style={styles.inputIcon}
@@ -218,7 +223,8 @@ export default class Register extends Component {
         >
           <Text style={styles.loginText}>회원가입</Text>
         </TouchableHighlight>
-      </View>
+        </ScrollView>
+        </KeyboardAvoidingView>
     );
   }
 }
