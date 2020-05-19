@@ -49,11 +49,16 @@ export default class App extends Component {
   };
 
   async isLoggedin() {
-    const val = await AsyncStorage.getItem(DBEACON_TOKEN);
-    if (val !== null) {
-      this.setState({ isLogin: true });
-    } else {
-      this.setState({ isLogin: false });
+    try{
+      const val = await AsyncStorage.getItem(DBEACON_TOKEN);
+      if (val !== null) {
+        this.setState({ isLogin: true });
+      } else {
+        this.setState({ isLogin: false });
+      }
+    }
+    catch(e){
+      console.log(e);
     }
   }
 

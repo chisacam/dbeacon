@@ -46,8 +46,19 @@ async function requestPermissionPhone() {
 requestPermission();
 requestPermissionPhone();
 Beacons.detectIBeacons();
-
-Beacons.startRangingBeaconsInRegion('Region1', 'e2c56db5-dffb-48b2-b060-d0f5a7109');
+/*
+Beacons.startMonitoringForRegion({
+  identifier:'IBeacon',
+  uuid:'e2c56db5-dffb-48d2-b060-d0f5a71096e0'
+})
+.then(() => console.log('Start Monitoring!!'))
+.catch((e) => console.log(e));
+*/
+Beacons.startRangingBeaconsInRegion('IBeacon', 'e2c56db5-dffb-48d2-b060-d0f5a71096e0')
+.then(() => console.log('Start Ranging!!'))
+.catch((e) => {
+  console.log(e);
+});
 
 class NavBar extends Component {
   //상단바 컴포넌트
@@ -134,24 +145,29 @@ class User extends Component {
     try{
       phonenumber = await DeviceInfo.getPhoneNumber();
       if(phonenumber !== null) {
-        const val = await AsyncStorage.getItem(DBEACON_TOKEN);
-        if(val !== null) {
-          const UserInfo = JSON.parse(val);
-          console.log(phonenumber.substr(3) + " " + UserInfo['phone']);
-          if(phonenumber.substr(3) !== UserInfo['phone']){
-            Alert.alert(
-              "알림","전화번호가 일치하지 않거나, 읽을 수 없습니다!",
-              [
-              {
-                text:"종료",
-                onPress:() => {
-                  AsyncStorage.removeItem(DBEACON_TOKEN);
-                  BackHandler.exitApp();
+        try{
+          const val = await AsyncStorage.getItem(DBEACON_TOKEN);
+          if(val !== null) {
+            const UserInfo = JSON.parse(val);
+            console.log(phonenumber.substr(3) + " " + UserInfo['phone']);
+            if(phonenumber.substr(3) !== UserInfo['phone']){
+              Alert.alert(
+                "알림","전화번호가 일치하지 않거나, 읽을 수 없습니다!",
+                [
+                {
+                  text:"종료",
+                  onPress:() => {
+                    AsyncStorage.removeItem(DBEACON_TOKEN);
+                    BackHandler.exitApp();
+                  }
                 }
-              }
-              ]
-            )
+                ]
+              )
+            }
           }
+        }
+        catch(e) {
+          console.log(e);
         }
       }
     } catch(e) {
@@ -270,6 +286,14 @@ class ButtonGroup extends Component {
         })
       }
     });
+    /*
+    this.beaconsDidEnterEvent = Beacons.BeaconsEventEmitter.addListener(
+      'regionDidEnter',
+      ({ identifier, uuid, minor, major }) => {
+        console.log('monitoring - regionDidEnter data: ', { identifier, uuid, minor, major });
+      }
+    );
+    */
   }
   componentWillUnmount() {
     DeviceEventEmitter.removeAllListeners()
