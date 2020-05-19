@@ -32,10 +32,10 @@ export default class Register extends Component {
   }
 
   componentDidMount() {
-    this.setState({ departList: [
-      "서울", "부산", "마산", "창원", "김해", "영동", "울산", "대전", "대구", "전주", "군산"
-    ]})
-    // this._getDepart();
+    // this.setState({ departList: [
+    //   "서울", "부산", "마산", "창원", "김해", "영동", "울산", "대전", "대구", "전주", "군산"
+    // ]})
+    this._getDepart();
   }
 
   _getDepart = () => {
@@ -212,8 +212,8 @@ export default class Register extends Component {
               this.state.email,
               this.state.password,
               this.state.passwordCheck,
-              this.state.phonenumber,
               this.state.depart,
+              this.state.phonenumber,
               this.state.questionType,
               this.state.questionAnswer
             )
