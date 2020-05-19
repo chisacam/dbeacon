@@ -6,11 +6,13 @@ import {
   TextInput,
   TouchableHighlight,
   Image,
+  Alert,
 } from "react-native";
 import {
   Actions
 } from "react-native-router-flux";
 import AsyncStorage from '@react-native-community/async-storage';
+import * as AppFunction from "../App"
 const DBEACON_TOKEN = 'dblab_dbeacon';
 
 export default class LoginView extends Component {
@@ -22,6 +24,7 @@ export default class LoginView extends Component {
       password: "",
     }
   }
+
   async _onValueChange(selectedValue) {
     try {
       const Value = JSON.stringify(selectedValue);
@@ -32,7 +35,14 @@ export default class LoginView extends Component {
   }
 
   login = (email, pass) => {
-    fetch("https://api.chiyak.duckdns.org/users/login", {
+    if(email === "") {
+      AppFunction.alert("Error", "이메일을 입력하세요")
+    }
+    else if (pass === "") {
+      AppFunction.alert("Error", "비밀번호를 입력하세요");
+    }
+    else {
+      fetch("https://api.chiyak.duckdns.org/users/login", {
       method: "POST", 
       headers: {
         'Accept': 'application/json',
@@ -45,11 +55,24 @@ export default class LoginView extends Component {
     })
     .then((response) => response.json())
     .then((responseData) => {
+      if(responseData.code === "success") {
+        this._onValueChange(responseData);
+        Actions.Main();
+      } else {
+        Alert.alert("알림", "가입정보를 확인하세요.");
+        Actions.refresh();
+      }
       console.log(responseData);
-      this._onValueChange(responseData);
-      Actions.Main();
+      // if (responseData["code"] != "error") {
+      //   alert("회원가입 완료! 가입한 정보로 로그인해주세요.");
+      //   Actions.login();
+      // } else {
+      //   alert(responseData["reason"]);
+      //   Actions.refresh();
+      // }
     })
     .done();
+    }
   };
 
   render() {
@@ -92,7 +115,7 @@ export default class LoginView extends Component {
 
         <TouchableHighlight
           style={styles.buttonContainer}
-          onPress={() => this.onClickListener()}
+          onPress={() => Actions.LostPass()}
         >
           <Text>비밀번호를 잊으셨나요?</Text>
         </TouchableHighlight>

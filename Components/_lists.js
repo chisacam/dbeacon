@@ -14,36 +14,41 @@ export default class ScrollList extends Component {
   }
 
   _getData = async () => {
-    console.log(this.props.startTime)
-    const val = await AsyncStorage.getItem(DBEACON_TOKEN);
-    if(val !== null){
-      const UserInfo = JSON.parse(val);
-      fetch("https://api.chiyak.duckdns.org/records/read", {
-        method: "POST",
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          uid: UserInfo['uid'],
-          startTime: this.props.startTime,
-          endTime: this.props.endTime
-        }),
-      })
-        .then((res) => res.json())
-        .then((json) => {
-          console.log(json)
-          this.setState({
-            data: json.reverse(),
-            order: 10
-          });
+    // console.log(this.props.startTime)
+    try{
+      const val = await AsyncStorage.getItem(DBEACON_TOKEN);
+      if(val !== null){
+        const UserInfo = JSON.parse(val);
+        fetch("https://api.chiyak.duckdns.org/records/read", {
+          method: "POST",
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            uid: UserInfo['uid'],
+            startTime: this.props.startTime,
+            endTime: this.props.endTime
+          }),
         })
-        .then(() => {
+          .then((res) => res.json())
+          .then((json) => {
+            console.log(json)
             this.setState({
-              // 최초 10개만 노출
-              tempdata: this.state.data.slice(0, 10),
+              data: json.reverse(),
+              order: 10
             });
-        });
+          })
+          .then(() => {
+              this.setState({
+                // 최초 10개만 노출
+                tempdata: this.state.data.slice(0, 10),
+              });
+          });
+      }
+    }
+    catch(e){
+      console.log(e);
     }
   };
 

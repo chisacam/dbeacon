@@ -4,6 +4,7 @@ import { Picker } from "@react-native-community/picker";
 import DatePicker from "./_datePicker";
 import ScrollList from "./_lists";
 import { Actions } from "react-native-router-flux";
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 export default class MyPage extends React.Component {
     state = {
@@ -42,23 +43,21 @@ export default class MyPage extends React.Component {
       this.setState({
         startTime: this.props.startTime || new Date().getFullYear() + "-" + (((new Date().getMonth() + 1) <= 10) ? "0" + (new Date().getMonth() + 1) : (new Date().getMonth() + 1)) + "-" + ((new Date().getDate() <= 10) ? "0" + new Date().getDate() : new Date().getDate()),
         endTime: this.props.endTime || new Date().getFullYear() + "-" + (((new Date().getMonth() + 1) <= 10) ? "0" + (new Date().getMonth() + 1) : (new Date().getMonth() + 1)) + "-" + (((new Date().getDate() + 1) <= 10) ? "0" + (new Date().getDate() + 1) : (new Date().getDate() + 1)),
-        // show: true,
       });
     } else if (selected === "total") {
       this.setState({
         startTime: "2020-01-01",
         endTime: this.props.endTime || new Date().getFullYear() + "-" + (((new Date().getMonth() + 1) <= 10) ? "0" + (new Date().getMonth() + 1) : (new Date().getMonth() + 1)) + "-" + (((new Date().getDate() + 1) <= 10) ? "0" + (new Date().getDate() + 1) : (new Date().getDate() + 1)),
-        // show: true,
       });
     }
   };
 
   render() {
     return (
-      <View style={styles.container}>
+      <SafeAreaProvider>
         <View style={styles.navBar}>
           {/* 상단 바 */}
-          <Text style={styles.navText}>근태 기록</Text>
+          <Text style={styles.navText}>근태기록</Text>
         </View>
         <View style={styles.selectBox}>
           {/* 선택 박스 */}
@@ -112,7 +111,7 @@ export default class MyPage extends React.Component {
            endTime={this.state.endTime}
          /> : null}
         </View>
-      </View>
+      </SafeAreaProvider>
     );
   }
 }
@@ -120,7 +119,7 @@ export default class MyPage extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
+    // paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
   },
   navBar: {
     flex: 0.7,

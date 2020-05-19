@@ -6,54 +6,102 @@ import {
   TextInput,
   TouchableHighlight,
   Image,
-  Alert,
   Platform,
-  StatusBar
+  StatusBar,
+  ScrollView,
+  KeyboardAvoidingView
 } from "react-native";
 import { Actions } from "react-native-router-flux";
+import * as AppFunction from "../App";
+import { Picker } from "@react-native-community/picker";
+
 export default class Register extends Component {
   constructor(props) {
     super(props);
-    
+
     this.state = {
       name: "",
       email: "",
       password: "",
       passwordCheck: "",
       depart: "",
-    }
+      phonenumber: "",
+      questionType: "treasure",
+      questionAnswer: "",
+      departList: []
+    };
   }
-  join = (name, email, pass, passre, depart) => {
-    fetch("https://api.chiyak.duckdns.org/users/signup", {
-      method: "POST", 
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        name: name,
-        userid: email,
-        userpw: pass, 
-        userpwre: passre,
-        depart:depart
+
+  componentDidMount() {
+    this._getDepart();
+  }
+
+  _getDepart = () => {
+    fetch("https://api.chiyak.duckdns.org/departs", {
+      method: "GET",
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/json",
+        }
       })
-    })
-    .then((response) => response.json())
-    .then((responseData) => {
-      console.log(responseData);
-      if(responseData['code'] != "error") {
-          alert('회원가입 완료! 가입한 정보로 로그인해주세요.');
-          Actions.login();
-      } else {
-          alert(responseData['reason']);
-          Actions.refresh();
-      }
-    })
-    .done();
+        .then( (res) => res.json() )
+        .then( (json) => {
+            this.setState({ departList: json })
+      });
+  }
+
+  join = (name, email, pass, passre, depart, phonenumber, questionType, questionAnswer) => {
+    if (name === "") {
+      AppFunction.alert("Error", "이름을 입력하세요");
+    } else if (email === "") {
+      AppFunction.alert("Error", "이메일을 입력하세요");
+    } else if (pass === "") {
+      AppFunction.alert("Error", "비밀번호를 입력하세요");
+    } else if (passre === "") {
+      AppFunction.alert("Error", "비밀번호를 다시 입력하세요");
+    } else if (depart === "") {
+      AppFunction.alert("Error", "부서를 입력하세요");
+    } else if (pass !== passre) {
+      AppFunction.alert("Error", "비밀번호가 일치하지 않습니다");
+    } else {
+      fetch("https://api.chiyak.duckdns.org/users/signup", {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: name,
+          userid: email,
+          userpw: pass,
+          userpwre: passre,
+          depart: depart,
+          phonenumber: phonenumber,
+          questionType: questionType,
+          questionAnswer: questionAnswer,
+        }),
+      })
+        .then((response) => response.json())
+        .then((responseData) => {
+          console.log(responseData);
+          if (responseData["code"] != "error") {
+            alert("회원가입 완료! 가입한 정보로 로그인해주세요.");
+            Actions.Login();
+          } else {
+            alert(responseData["reason"]);
+            Actions.refresh();
+          }
+        })
+        .done();
+    }
   };
   render() {
     return (
-      <View style={styles.container}>
+      <KeyboardAvoidingView
+      behavior="height"
+      style={styles.container}
+    >
+      <ScrollView>
         <View style={styles.inputContainer}>
           <Image
             style={styles.inputIcon}
@@ -71,7 +119,6 @@ export default class Register extends Component {
             style={styles.inputIcon}
             source={require("../assets/mail.png")}
           />
-
           <TextInput
             style={styles.inputs}
             placeholder="이메일"
@@ -112,22 +159,72 @@ export default class Register extends Component {
             style={styles.inputIcon}
             source={require("../assets/org.png")}
           />
+          <Picker
+            selectedValue={this.state.depart}
+            style={{ height: 50, width: 200 }}
+            onValueChange={(itemValue, itemIndex) => {
+            this.setState({ depart: itemValue });
+          }}
+        >
+          {this.state.departList.map((prop, key) => {
+            return(
+              <Picker.Item label={prop} value={prop} />
+            )
+          })}
+
+        </Picker>
+        </View>
+        <View style={styles.inputContainer}>
+          <Image
+            style={styles.inputIcon}
+            source={require("../assets/phone.png")}
+          />
           <TextInput
             style={styles.inputs}
-            placeholder="조직"
+            placeholder="전화번호를 입력하세요"
             underlineColorAndroid="transparent"
-            onChangeText={(depart) => this.setState({ depart })}
+            keyboardType="number-pad"
+            onChangeText={(phonenumber) => this.setState({ phonenumber })}
           />
         </View>
-
+        <Picker
+          selectedValue={this.state.questionType}
+          style={{ height: 50, width: 200 }}
+          onValueChange={(itemValue, itemIndex) => {
+            this.setState({ questionType: itemValue });
+          }}
+        >
+          <Picker.Item label="내 보물 1호는?" value="treasure" />
+          <Picker.Item label="나의 고향은?" value="hometown" />
+          <Picker.Item label="어릴적 내 별명은?" value="nickname" />
+        </Picker>
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={styles.inputs}
+            placeholder="답변을 입력하세요"
+            underlineColorAndroid="transparent"
+            onChangeText={(questionAnswer) => this.setState({ questionAnswer })}
+          />
+        </View>
         <TouchableHighlight
           style={[styles.buttonContainer, styles.loginButton]}
-          // 회원가입 버튼 이벤트
-          onPress = {() => this.join(this.state.name,this.state.email, this.state.password,this.state.PasswordCheck, this.state.depart)}
+          onPress={() =>
+            this.join(
+              this.state.name,
+              this.state.email,
+              this.state.password,
+              this.state.passwordCheck,
+              this.state.depart,
+              this.state.phonenumber,
+              this.state.questionType,
+              this.state.questionAnswer
+            )
+          }
         >
           <Text style={styles.loginText}>회원가입</Text>
         </TouchableHighlight>
-      </View>
+        </ScrollView>
+        </KeyboardAvoidingView>
     );
   }
 }
@@ -138,7 +235,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "#FFFFFF",
-    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
+    // paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
   },
   inputContainer: {
     borderBottomColor: "grey",
