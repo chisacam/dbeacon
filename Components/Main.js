@@ -23,6 +23,19 @@ import DeviceInfo from 'react-native-device-info';
 
 const DBEACON_TOKEN = 'dblab_dbeacon';
 
+async function requestPermission() {		
+  try {		
+    const grantedLoc = await PermissionsAndroid.requestMultiple([
+      PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION, 
+      PermissionsAndroid.PERMISSIONS.READ_PHONE_STATE
+    ]);		
+  } catch (err) {		
+    console.warn(err);		
+  }		
+}		
+
+requestPermission();		
+
 Beacons.detectIBeacons();
 
 Beacons.startMonitoringForRegion({
