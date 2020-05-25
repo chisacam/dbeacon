@@ -23,43 +23,21 @@ import DeviceInfo from 'react-native-device-info';
 
 const DBEACON_TOKEN = 'dblab_dbeacon';
 
-async function requestPermission() {
-  try {
-    const grantedLoc = await PermissionsAndroid.request(
-      PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
-    );
-  } catch (err) {
-    console.warn(err);
-  }
-}
-
-async function requestPermissionPhone() {
-  try {
-    const grantedPhone = await PermissionsAndroid.request(
-      PermissionsAndroid.PERMISSIONS.READ_PHONE_STATE
-    );
-  } catch(e) {
-    console.warn(e);
-  }
-}
-
-requestPermission();
-requestPermissionPhone();
 Beacons.detectIBeacons();
-/*
+
 Beacons.startMonitoringForRegion({
   identifier:'IBeacon',
   uuid:'e2c56db5-dffb-48d2-b060-d0f5a71096e0'
 })
 .then(() => console.log('Start Monitoring!!'))
 .catch((e) => console.log(e));
-*/
+/*
 Beacons.startRangingBeaconsInRegion('IBeacon', 'e2c56db5-dffb-48d2-b060-d0f5a71096e0')
 .then(() => console.log('Start Ranging!!'))
 .catch((e) => {
   console.log(e);
 });
-
+*/
 class NavBar extends Component {
   //상단바 컴포넌트
   render() {
@@ -272,8 +250,10 @@ class ButtonGroup extends Component {
     super();
  
     this.state={
-      ButtonStateHolder : false
+      ButtonStateHolder : false,
+      isFirst : true
     }
+    /*
     this.listener = DeviceEventEmitter.addListener('beaconsDidRange', (data) => {
       if (data.beacons.length) {
         this.setState({
@@ -285,18 +265,84 @@ class ButtonGroup extends Component {
           ButtonStateHolder : true
         })
       }
+      console.log(this.state.isFirst)
     });
-    /*
+    */
     this.beaconsDidEnterEvent = Beacons.BeaconsEventEmitter.addListener(
       'regionDidEnter',
       ({ identifier, uuid, minor, major }) => {
         console.log('monitoring - regionDidEnter data: ', { identifier, uuid, minor, major });
+        this.setState({ 
+          ButtonStateHolder : false
+        });
+        if(this.state.isFirst) {
+          this._SendFunction('출근');
+          this.setState({
+            isFirst : false
+          })
+        }
+        else {
+          this._SendFunction('복귀');
+        }
       }
     );
-    */
+
+    this.regionDidExitEvent = Beacons.BeaconsEventEmitter.addListener(
+      'regionDidExit',
+      ({ identifier, uuid, minor, major }) => {
+        console.log('monitoring - regionDidExit data: ', { identifier, uuid, minor, major });
+        this.setState({ 
+          ButtonStateHolder : true
+        });
+        this._SendFunction('외출');
+      }
+    );
   }
+
+  async _SendFunction(text) {
+    try{
+      const val = await AsyncStorage.getItem(DBEACON_TOKEN);
+      if(val !== null){
+        const UserInfo = JSON.parse(val);
+        fetch("https://api.chiyak.duckdns.org/records/insert", {
+          method: "POST", 
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            uid: UserInfo['uid'],
+            name: UserInfo['name'],
+            depart: UserInfo['depart'],
+            type: text
+          })
+        })
+        .then((response) => response.json())
+        .then((responseData) => {
+          console.log(responseData);
+        })
+        .done();
+      }
+    }
+    catch(e) {
+      console.log(e);
+    }
+  }
+
   componentWillUnmount() {
-    DeviceEventEmitter.removeAllListeners()
+    DeviceEventEmitter.removeAllListeners();
+    // stop monitoring beacons:
+    Beacons
+    .stopMonitoringForRegion({
+      identifier:'IBeacon',
+      uuid:'e2c56db5-dffb-48d2-b060-d0f5a71096e0'
+    })
+    .then(() => console.log('Beacons monitoring stopped succesfully'))
+    .catch(error => console.log(`Beacons monitoring not stopped, error: ${error}`));
+    
+    // remove beacons events we registered at componentDidMount
+    this.beaconsDidEnterEvent.remove();
+    this.regionDidExitEvent.remove();
   }
   render() {
     return (

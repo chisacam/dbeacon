@@ -99,10 +99,10 @@ export default class ScrollList extends Component {
         {/* 시간 */}
         <View style={{ flex: 1, justifyContent: "flex-start" }}>
           <Text style={{ fontSize: 15, color: "black" }}>
-            {item.time.slice(0, 10)}
+            {new Date(item.time).toLocaleDateString('ko-KR')}
           </Text>
           <Text style={{ fontSize: 12, color: "grey" }}>
-            {item.time.slice(11, 19)}
+            {new Date(item.time).toLocaleTimeString()}
           </Text>
         </View>
         {/* 타입 */}
