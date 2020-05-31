@@ -134,7 +134,7 @@ class User extends Component {
   }  
   async _getPhoneInfo() {
     try{
-      phonenumber = await DeviceInfo.getPhoneNumber();
+      const phonenumber = await DeviceInfo.getPhoneNumber();
       if(phonenumber !== null) {
         try{
           const val = await AsyncStorage.getItem(DBEACON_TOKEN);
@@ -263,7 +263,7 @@ class ButtonGroup extends Component {
     super();
  
     this.state={
-      ButtonStateHolder : false,
+      ButtonStateHolder : true,
       isFirst : true
     }
     /*
@@ -343,7 +343,6 @@ class ButtonGroup extends Component {
   }
 
   componentWillUnmount() {
-    DeviceEventEmitter.removeAllListeners();
     // stop monitoring beacons:
     Beacons
     .stopMonitoringForRegion({

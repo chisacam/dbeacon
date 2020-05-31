@@ -2,7 +2,9 @@ import React, { Component } from "react";
 import {
   StyleSheet,
   BackHandler,
-  Alert
+  Alert,
+  AppState,
+  ToastAndroid
 } from "react-native";
 import Main from "./Components/Main";
 import Login from "./Components/Login";
@@ -22,15 +24,10 @@ import {
 } from "react-native-router-flux";
 
 import AsyncStorage from '@react-native-community/async-storage';
-import { StackViewStyleInterpolator } from "react-navigation-stack";
 
 const DBEACON_TOKEN = 'dblab_dbeacon';
 
 const prefix = Platform.OS === "android" ? "mychat://mychat/" : "mychat://";
-
-const transitionConfig = () => ({
-  screenInterpolator: StackViewStyleInterpolator.forFadeFromBottomAndroid,
-});
 
 export function alert (title, msg) {
   Alert.alert(
@@ -44,9 +41,17 @@ export function alert (title, msg) {
 }
 
 export default class App extends Component {
-  state = {
-    isLogin: false,
-  };
+  constructor(props) {
+    super(props)
+    this.state = {
+      isLogin: false,
+      appState: AppState.currentState
+    };
+
+    this.handleBackButton = this.handleBackButton.bind(this)
+
+  }
+
 
   async isLoggedin() {
     try{
@@ -64,12 +69,14 @@ export default class App extends Component {
 
   componentDidMount() {
     this.isLoggedin();
-    BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
+    BackHandler.addEventListener('hardwareBackPress', this.handleBackButton.bind(this));
+    console.log("didmount!");
   }
 
   componentWillUnmount() {
     this.exitApp = false;
-    BackHandler.removeEventListener('hardwareBackPress', this.handleBackButton);
+    BackHandler.removeEventListener('hardwareBackPress');
+    console.log("willunmount!");
   }
 
   handleBackButton = () => {
@@ -77,7 +84,7 @@ export default class App extends Component {
     if (this.exitApp == undefined || !this.exitApp) {
       if(Actions.currentScene !== 'Main' || Actions.currentScene !== 'Login'){
         this.exitApp = true;
-
+        ToastAndroid.show("한번더 누르면 종료합니다.",ToastAndroid.SHORT);
         this.timeout = setTimeout(
             () => {
                 this.exitApp = false;
@@ -88,22 +95,21 @@ export default class App extends Component {
         this.exitApp = false;
         Actions.pop();
       }
-
+      return true;
     } else {
         clearTimeout(this.timeout);
 
         BackHandler.exitApp();  // 앱 종료
+        return false;
     }
-    return true;
 }
   render() {
     return (
         <Router
-          sceneStyle={styles.scene}
+          sceneStyle={styles.container}
           uriPrefix={prefix}
+          backAndroidHandler={this.handleBackButton}
         >
-          <Overlay key="overlay">
-            <Modal key="modal" hideNavBar transitionConfig={transitionConfig}>
               {this.state.isLogin ? (
                 <Stack
                   key="root"
@@ -135,8 +141,6 @@ export default class App extends Component {
                   <Scene key="ChangePass" component={ChangePass} title="ChangePass" />
                 </Stack>
               )}
-            </Modal>
-          </Overlay>
         </Router>
     );
   }
