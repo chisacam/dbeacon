@@ -15,7 +15,7 @@
     "@react-native-community/picker": "^1.8.0",
     "moment": "^2.29.4",
     "react": "16.13.1",
-    "react-dom": "^16.13.1",
+    "react-dom": "^16.14.0",
     "react-native": "0.82.1",
     "react-native-beacons-manager": "git://github.com/MacKentoch/react-native-beacons-manager.git#53c1bda",
     "react-native-button": "^2.4.0",
