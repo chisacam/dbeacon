@@ -22,7 +22,7 @@
     "react-native-datepicker": "^1.7.2",
     "react-native-device-info": "^5.5.8",
     "react-native-gesture-handler": "^1.10.3",
-    "react-native-message-bar": "^2.0.10",
+    "react-native-message-bar": "^2.1.0",
     "react-native-reanimated": "^2.10.0",
     "react-native-router-flux": "4.3.1",
     "react-native-safe-area-context": "^0.7.3",
