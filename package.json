@@ -13,7 +13,7 @@
     "@react-native-community/async-storage": "^1.12.1",
     "@react-native-community/datetimepicker": "^2.3.2",
     "@react-native-community/picker": "^1.8.0",
-    "moment": "^2.29.4",
+    "moment": "^2.30.1",
     "react": "16.14.0",
     "react-dom": "^16.13.1",
     "react-native": "0.83.0",
